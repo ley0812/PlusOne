@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+
+        <item android:id="@+id/plusone_sign_out"
+            android:icon="@android:drawable/ic_menu_camera"
+            android:title="로그아웃"
+            android:visible="false"/>
+
+        <item android:id="@+id/plusone_write"
+            android:icon="@android:drawable/ic_menu_slideshow"
+            android:title="새 글 쓰기"
+            android:visible="false"/>
+
+        <item android:id="@+id/plusone_revoke"
+            android:icon="@android:drawable/ic_menu_slideshow"
+            android:title="Revoke"
+            android:visible="false"/>
+    </group>
+
+</menu>
