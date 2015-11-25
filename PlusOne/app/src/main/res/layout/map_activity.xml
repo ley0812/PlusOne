@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <EditText
+        android:id="@+id/edit1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="주소를 입력해주세요." />
+    <EditText
+        android:id="@+id/edit2"
+        android:layout_below="@id/edit1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="출력 개수를 입력해주세요." />
+
+    <Button
+        android:id="@+id/btn1"
+        android:layout_below="@id/edit2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="결과보기" />
+
+    <TextView
+        android:id="@+id/text1"
+        android:layout_below="@id/btn1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp" />
+
+    <fragment
+        android:id="@+id/map_view"
+        android:layout_below="@id/text1"
+        android:name="ac.plusone.map.MapActivity"
+        class="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="500dp" />
+
+    <Button
+        android:id="@+id/drawerbtn"
+        android:layout_below="@id/map_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="나와라 서랍아" />
+
+    <SlidingDrawer
+        android:id="@+id/bottom"
+        android:layout_alignBottom="@id/map_view"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_marginTop="150dp"
+        android:content="@+id/recyclerView"
+        android:handle="@+id/handle"
+        android:orientation="vertical">
+        <Button
+            android:id="@+id/handle"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="gone"></Button>
+        <LinearLayout
+            android:id="@+id/mother"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </SlidingDrawer>
+</RelativeLayout>
