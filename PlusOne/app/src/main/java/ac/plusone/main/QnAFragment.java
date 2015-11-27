@@ -34,8 +34,7 @@ public class QnAFragment extends Fragment {
     private JSONObject json;
     private ArrayList<BasicNameValuePair> nameValuePairs;
     private ArrayList<BoardVO> QnAList;
-    private String lastDate;
-
+    private String lastNum;
     int size = 0;
 
     @Override
@@ -47,7 +46,7 @@ public class QnAFragment extends Fragment {
 
         Bundle args = getArguments();
         this.boardList = args.getParcelableArrayList("QnAList");
-        lastDate = boardList.get(boardList.size()-1).getDate();
+        lastNum = String.valueOf(boardList.get(boardList.size()-1).getNum());
 
         recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
@@ -96,7 +95,7 @@ public class QnAFragment extends Fragment {
         protected Object doInBackground(Object[] params) {
             nameValuePairs = new ArrayList<BasicNameValuePair>();
             nameValuePairs.add(new BasicNameValuePair("category", "Q&A"));
-            nameValuePairs.add(new BasicNameValuePair("lastDate", lastDate));
+            nameValuePairs.add(new BasicNameValuePair("num", lastNum));
 
             jParser = new JSONParser("BoardMoreServlet", nameValuePairs);
             json = jParser.getJSONText();
@@ -109,7 +108,7 @@ public class QnAFragment extends Fragment {
             QnAList = new ArrayList<BoardVO>();
 
             try {
-                array1 = new JSONArray(json.getString("QnA"));
+                array1 = new JSONArray(json.getString("Q&A"));
                 for (int i = 0; i < array1.length(); i++) {
                     JSONObject insideObject = array1.getJSONObject(i);
 
@@ -126,7 +125,7 @@ public class QnAFragment extends Fragment {
                 }
 
                 size = QnAList.size();
-                lastDate = QnAList.get(size-1).getDate();
+                lastNum = String.valueOf(QnAList.get(size-1).getNum());
 
             } catch (JSONException e) {
                 e.printStackTrace();
