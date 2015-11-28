@@ -2,7 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingLeft="5dp"
+    android:paddingRight="5dp">
 
     <Spinner
         android:id="@+id/spinner1"
@@ -13,57 +15,11 @@
         android:verticalScrollbarPosition="left"
         android:layout_margin="5dp" />
 
+    <ExpandableListView
+        android:id="@+id/elv_list"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        />
 
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="fill_parent"
-            android:id="@+id/listlinear"
-            android:layout_below="@+id/spinner1">
-
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="기술상담/농기계임대"
-                android:id="@+id/textView2"
-                android:background="#c37f4a"
-                android:textColor="#FFFFFF" />
-            <ListView
-                android:id="@+id/Listview_sub1"
-                android:layout_width="match_parent"
-                android:layout_height="fill_parent"
-                ></ListView>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="농지/주택"
-                android:id="@+id/textView3"
-                android:background="#65d589"
-                android:textColor="#FFFFFF" />
-            <ListView
-                android:id="@+id/Listview_sub2"
-                android:layout_width="match_parent"
-                android:layout_height="fill_parent"
-                ></ListView>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="금융"
-                android:id="@+id/textView4"
-                android:background="#728efe"
-                android:textColor="#FFFFFF" />
-            <ListView
-                android:id="@+id/Listview_sub3"
-                android:layout_width="match_parent"
-                android:layout_height="fill_parent"></ListView>
-
-
-        </LinearLayout>
 
 </LinearLayout>

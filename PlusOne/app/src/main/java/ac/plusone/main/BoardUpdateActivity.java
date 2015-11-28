@@ -126,6 +126,7 @@ public class BoardUpdateActivity extends AppCompatActivity {
         @Override
         protected Object doInBackground(Object[] params) {
             jParser = new JSONParser("BoardUpdateServlet", updateContentPair);
+
             json = jParser.getJSONText();
             return json;
         }
@@ -133,26 +134,17 @@ public class BoardUpdateActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Object o) {
             JSONArray array = null;
-            BoardVO vo = null;
+            String result = "Fail";
 
             try {
-                array = new JSONArray(json.getString("updateBoard"));
+                array = new JSONArray(json.getString("Result"));
                 for (int i = 0; i < array.length(); i++) {
                     JSONObject insideObject = array.getJSONObject(i);
-
-                    vo = new BoardVO();
-                    vo.setTitle(insideObject.getString("title"));
-                    vo.setContent(insideObject.getString("content"));
-                    vo.setWriter(insideObject.getString("writer"));
-                    vo.setWriter_id(insideObject.getString("writer_id"));
-                    vo.setCategory(insideObject.getString("category"));
-                    vo.setDate(insideObject.getString("date"));
-                    vo.setNum(insideObject.getInt("num"));
+                    result = insideObject.getString("insertResult");
                 }
 
-                if(vo != null) {
-                    Intent intent = new Intent(BoardUpdateActivity.this, BoardContentActivity.class);
-                    intent.putExtra("boardContent", vo);
+                if(result.equals("Success")) {
+                    Intent intent = new Intent(BoardUpdateActivity.this, BoardActivity.class);
                     startActivity(intent);
                     finish();
                 } else {

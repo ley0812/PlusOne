@@ -93,8 +93,8 @@ public class BoardWriteActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+
         Intent intent = new Intent(BoardWriteActivity.this, BoardActivity.class);
-        intent.putExtra("currentPage", getIntent().getIntExtra("currentPage",0));
         startActivity(intent);
         finish();
     }
@@ -132,7 +132,6 @@ public class BoardWriteActivity extends AppCompatActivity {
 
                 if(result.equals("Success")) {
                     Intent intent = new Intent(BoardWriteActivity.this, BoardActivity.class);
-                    intent.putExtra("currentPage", getIntent().getIntExtra("currentPage",0));
                     startActivity(intent);
                     finish();
                 } else {

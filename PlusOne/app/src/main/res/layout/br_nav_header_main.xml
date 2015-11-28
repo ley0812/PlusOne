@@ -4,16 +4,16 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="@dimen/nav_header_height"
-    android:background="@color/colorPrimaryDark"
+    android:background="@color/colorAccent"
     android:theme="@style/ThemeOverlay.AppCompat.Dark"
     android:orientation="vertical"
     android:gravity="center">
 
-    <com.pkmmte.view.CircularImageView
-        android:id="@+id/profile_image"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:src="@drawable/ic_profile"
+        android:id="@+id/profile_imageView"
         android:visibility="gone"/>
 
     <TextView
@@ -23,13 +23,6 @@
         android:paddingTop="24dp"
         android:text="@string/please_login"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
-
-    <TextView
-        android:id="@+id/profile_email"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingTop="8dp"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
 
     <com.google.android.gms.common.SignInButton
         android:id="@+id/btn_sign_in"

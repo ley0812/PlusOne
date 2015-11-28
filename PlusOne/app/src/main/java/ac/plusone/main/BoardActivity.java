@@ -40,10 +40,10 @@ public class BoardActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        new JsonLoadingTask().execute();
+
         viewPager = (ViewPager)findViewById(R.id.pager);
         tabLayout = (TabLayout) findViewById(R.id.tabs);
-
-        new JsonLoadingTask().execute();
 
         SharedPreferences userPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         final String userID = userPref.getString("currentUser", "");
@@ -52,22 +52,14 @@ public class BoardActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (userID.equals("")) {
+                if(userID.equals("")) {
                     Toast.makeText(BoardActivity.this, "로그인 해 주세요.", Toast.LENGTH_LONG).show();
-                } else {
-                    Intent intent = new Intent(BoardActivity.this, BoardWriteActivity.class);
-                    intent.putExtra("currentPage", viewPager.getCurrentItem());
-                    startActivity(intent);
+                }else {
+                    startActivity(new Intent(BoardActivity.this, BoardWriteActivity.class));
                     finish();
                 }
             }
         });
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        finish();
     }
 
     @Override
@@ -102,7 +94,7 @@ public class BoardActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Object o) {
-            if(dialog != null) dialog.dismiss();
+            dialog.dismiss();
 
             JSONArray array1 = null;
             JSONArray array2 = null;
@@ -168,14 +160,11 @@ public class BoardActivity extends AppCompatActivity {
 
                     BoardFragmentAdapter adapter = new BoardFragmentAdapter(getSupportFragmentManager(), intent);
                     viewPager.setAdapter(adapter);
-                    viewPager.setCurrentItem(getIntent().getIntExtra("currentPage", 0));
                     tabLayout.setupWithViewPager(viewPager);
                 }
 
             } catch (JSONException e) {
                 e.printStackTrace();
-            } catch (IllegalArgumentException ie) {
-                ie.printStackTrace();
             } catch (NullPointerException ne) {
                 ne.printStackTrace();
             }

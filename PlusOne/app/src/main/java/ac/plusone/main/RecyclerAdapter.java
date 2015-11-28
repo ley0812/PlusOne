@@ -1,14 +1,25 @@
 package ac.plusone.main;
 
 import android.content.Intent;
+import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Layout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -59,8 +70,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     // Constructor
-    public RecyclerAdapter(ArrayList<BoardVO> vo, LayoutInflater inflater,
-                           RecyclerView recyclerView) {
+    public RecyclerAdapter(ArrayList<BoardVO> vo, LayoutInflater inflater, RecyclerView recyclerView) {
         this.boardList = vo;
         this.inflater = inflater;
 
@@ -99,7 +109,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             vh = new ListViewHolder(v);
         } else {
             View v = LayoutInflater.from(viewGroup.getContext())
-                    .inflate(R.layout.br_progressbar_item, viewGroup, false);
+                    .inflate(R.layout.progressbar_item, viewGroup, false);
 
             vh = new ProgressViewHolder(v);
 
@@ -112,6 +122,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
      public int getItemViewType(int position) {
         return boardList.get(position) != null ? VIEW_ITEM : VIEW_PROG;
     }
+
+
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {

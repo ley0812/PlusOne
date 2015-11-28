@@ -25,16 +25,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="8sp"
-            android:background="@drawable/button_layout_content"
-            android:textColor="@android:color/white"
             android:text="등록"/>
         <Button
             android:id="@+id/btn_cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="8sp"
-            android:background="@drawable/button_layout_content"
-            android:textColor="@android:color/white"
             android:text="취소"/>
     </LinearLayout>
 

@@ -3,10 +3,6 @@ package ac.plusone.main;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.logging.SimpleFormatter;
-
 /**
  * Created by MinJeong on 2015-11-12.
  */
@@ -85,10 +81,7 @@ public class BoardVO implements Parcelable {
     }
 
     public void setDate(String strDate) {
-
         this.date = strDate;
-        //SimpleDateFormat format = new SimpleDateFormat("yyyy.MM.dd HH:mm");
-        //this.date = format.format(strDate);
     }
 
     public String getWriter_id() {

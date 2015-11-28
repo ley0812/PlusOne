@@ -33,7 +33,8 @@ public class MentorFragment extends Fragment {
     private JSONObject json;
     private ArrayList<BasicNameValuePair> nameValuePairs;
     private ArrayList<BoardVO> mentorList;
-    private String lastNum;
+    private String lastDate;
+
     int size=0;
 
     @Override
@@ -45,7 +46,7 @@ public class MentorFragment extends Fragment {
 
         Bundle args = getArguments();
         this.boardList = args.getParcelableArrayList("MentorList");
-        lastNum = String.valueOf(boardList.get(boardList.size()-1).getNum());
+        lastDate = boardList.get(boardList.size()-1).getDate();
 
         recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(inflater.getContext()));
@@ -92,7 +93,7 @@ public class MentorFragment extends Fragment {
         protected Object doInBackground(Object[] params) {
             nameValuePairs = new ArrayList<BasicNameValuePair>();
             nameValuePairs.add(new BasicNameValuePair("category", "멘토"));
-            nameValuePairs.add(new BasicNameValuePair("num", lastNum));
+            nameValuePairs.add(new BasicNameValuePair("lastDate", lastDate));
 
             jParser = new JSONParser("BoardMoreServlet", nameValuePairs);
             json = jParser.getJSONText();
@@ -105,7 +106,7 @@ public class MentorFragment extends Fragment {
             mentorList = new ArrayList<BoardVO>();
 
             try {
-                array1 = new JSONArray(json.getString("멘토"));
+                array1 = new JSONArray(json.getString("Mentor"));
                 for (int i = 0; i < array1.length(); i++) {
                     JSONObject insideObject = array1.getJSONObject(i);
 
@@ -122,7 +123,7 @@ public class MentorFragment extends Fragment {
                 }
 
                 size = mentorList.size();
-                lastNum = String.valueOf(mentorList.get(size - 1).getNum());
+                lastDate = mentorList.get(size - 1).getDate();
 
             } catch (JSONException e) {
                 e.printStackTrace();
