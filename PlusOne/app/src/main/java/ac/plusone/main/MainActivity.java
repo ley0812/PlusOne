@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -19,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,8 +33,10 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.pkmmte.view.CircularImageView;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 
 import ac.plusone.R;
 import ac.plusone.guide.GuideActivity;
@@ -46,14 +50,16 @@ public class MainActivity extends AppCompatActivity
     private final int TIME_DELAY = 2000;
     private long back_pressed;
 
-    private Button btn;
+    private TextView board_more;
+    private ArrayList<BoardVO> mainBoardList;
+
     private Button mapBtn;
-    private Button btn_guide;
+    private ImageView btn_guide;
 
     private GoogleApiClient mGoogleApiClient;
     private SignInButton signInButton;
-    private ImageView profileImg;
-    private TextView profileName;
+    private CircularImageView profileImg2;
+    private TextView profileName, profileEmail;
     private MenuItem signOut, write, revoke;
 
     @Override
@@ -62,6 +68,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.br_activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        toolbar.setLogo(R.drawable.logo);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -75,8 +82,9 @@ public class MainActivity extends AppCompatActivity
         Menu navMenu = navigationView.getMenu();
 
         signInButton = (SignInButton)headerView.findViewById(R.id.btn_sign_in);
-        profileImg = (ImageView) headerView.findViewById(R.id.profile_imageView);
+        profileImg2 = (CircularImageView)headerView.findViewById(R.id.profile_image);
         profileName = (TextView) headerView.findViewById(R.id.profile_name);
+        profileEmail = (TextView) headerView.findViewById(R.id.profile_email);
         signOut = navMenu.getItem(0);
         write = navMenu.getItem(1);
         revoke = navMenu.getItem(2);
@@ -86,11 +94,13 @@ public class MainActivity extends AppCompatActivity
         if(!userID.equals("")) {
             updateUI(true);
             profileName.setText(userPref.getString("currentUserName", getString(R.string.please_login)));
-            new LoadProfileImage().execute(userPref.getString("currentUserPhoto", "aaaaa"));
+            profileEmail.setText(userPref.getString("currentUserEmail", ""));
+            new LoadProfileImage().execute(userPref.getString("currentUserPhoto", "a"));
         }
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.server_client_id))
+                .requestEmail()
                 .build();
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -111,8 +121,10 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        btn = (Button)findViewById(R.id.board);
-        btn.setOnClickListener(new View.OnClickListener() {
+        setMainBoard();
+
+        board_more = (TextView) findViewById(R.id.board);
+        board_more.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, BoardActivity.class);
@@ -127,7 +139,7 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
             }
         });
-        btn_guide = (Button)findViewById(R.id.btn_guide);
+        btn_guide = (ImageView) findViewById(R.id.btn_guide);
         btn_guide.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -136,6 +148,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
     }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -153,6 +166,7 @@ public class MainActivity extends AppCompatActivity
 
             acct = result.getSignInAccount();
             profileName.setText(acct.getDisplayName());
+            profileEmail.setText(acct.getEmail());
             new LoadProfileImage().execute(acct.getPhotoUrl().toString());
 
             updateUI(true);
@@ -160,9 +174,9 @@ public class MainActivity extends AppCompatActivity
             SharedPreferences userPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
             SharedPreferences.Editor editor = userPref.edit();
             editor.putString("currentUser", acct.getId());
-            Log.d("###", "SignIn User : " + acct.getId());
             editor.putString("currentUserName", acct.getDisplayName());
             editor.putString("currentUserPhoto", acct.getPhotoUrl().toString());
+            editor.putString("currentUserEmail", acct.getEmail().toString());
             editor.commit();
 
             DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -175,14 +189,15 @@ public class MainActivity extends AppCompatActivity
     void updateUI(boolean signIn) {
         if(signIn) {
             signInButton.setVisibility(View.GONE);
-            profileImg.setVisibility(View.VISIBLE);
+            profileImg2.setVisibility(View.VISIBLE);
             signOut.setVisible(true);
             write.setVisible(true);
             revoke.setVisible(true);
         }else {
             signInButton.setVisibility(View.GONE);
             profileName.setText(getString(R.string.please_login));
-            profileImg.setVisibility(View.GONE);
+            profileEmail.setText("");
+            profileImg2.setVisibility(View.GONE);
             signInButton.setVisibility(View.VISIBLE);
             signOut.setVisible(false);
             write.setVisible(false);
@@ -249,8 +264,7 @@ public class MainActivity extends AppCompatActivity
     private class LoadProfileImage extends AsyncTask<String, Void, Bitmap> {
 
         protected Bitmap doInBackground(String... urls) {
-            String personPhotoUrl = urls[0].substring(0, urls[0].toString().length() - 2)
-                    + PROFILE_PIC_SIZE;
+            String personPhotoUrl = urls[0].substring(0, urls[0].toString().length() - 2) + PROFILE_PIC_SIZE;
             Bitmap profileImage = null;
             try {
                 InputStream in = new java.net.URL(personPhotoUrl).openStream();
@@ -261,10 +275,87 @@ public class MainActivity extends AppCompatActivity
             }
             return profileImage;
         }
-
         protected void onPostExecute(Bitmap result) {
-            profileImg.setImageBitmap(result);
+            profileImg2.setImageBitmap(result);
         }
+    }
+
+
+
+
+    public void setMainBoard() {
+        RelativeLayout layout1, layout2, layout3, layout4, layout5;
+        TextView board1, board11, board2, board22, board3, board33, board4, board44, board5, board55;
+
+        layout1 = (RelativeLayout)findViewById(R.id.main_relative_layout1);
+        layout2 = (RelativeLayout)findViewById(R.id.main_relative_layout2);
+        layout3 = (RelativeLayout)findViewById(R.id.main_relative_layout3);
+        layout4 = (RelativeLayout)findViewById(R.id.main_relative_layout4);
+        layout5 = (RelativeLayout)findViewById(R.id.main_relative_layout5);
+
+        board1 = (TextView)findViewById(R.id.board_main1);
+        board11 = (TextView)findViewById(R.id.board_main11);
+        board2 = (TextView)findViewById(R.id.board_main2);
+        board22 = (TextView)findViewById(R.id.board_main22);
+        board3 = (TextView)findViewById(R.id.board_main3);
+        board33 = (TextView)findViewById(R.id.board_main33);
+        board4 = (TextView)findViewById(R.id.board_main4);
+        board44 = (TextView)findViewById(R.id.board_main44);
+        board5 = (TextView)findViewById(R.id.board_main5);
+        board55 = (TextView)findViewById(R.id.board_main55);
+        mainBoardList = getIntent().getParcelableArrayListExtra("MainBoard");
+
+        board1.setText(mainBoardList.get(0).getTitle());
+        board11.setText(mainBoardList.get(0).getCategory());
+        board2.setText(mainBoardList.get(1).getTitle());
+        board22.setText(mainBoardList.get(1).getCategory());
+        board3.setText(mainBoardList.get(2).getTitle());
+        board33.setText(mainBoardList.get(2).getCategory());
+        board4.setText(mainBoardList.get(3).getTitle());
+        board44.setText(mainBoardList.get(3).getCategory());
+        board5.setText(mainBoardList.get(4).getTitle());
+        board55.setText(mainBoardList.get(4).getCategory());
+
+        layout1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, BoardContentActivity.class);
+                intent.putExtra("boardContent", mainBoardList.get(0));
+                startActivity(intent);
+            }
+        });
+        layout2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, BoardContentActivity.class);
+                intent.putExtra("boardContent", mainBoardList.get(1));
+                startActivity(intent);
+            }
+        });
+        layout3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, BoardContentActivity.class);
+                intent.putExtra("boardContent", mainBoardList.get(2));
+                startActivity(intent);
+            }
+        });
+        layout4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, BoardContentActivity.class);
+                intent.putExtra("boardContent", mainBoardList.get(3));
+                startActivity(intent);
+            }
+        });
+        layout5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, BoardContentActivity.class);
+                intent.putExtra("boardContent", mainBoardList.get(4));
+                startActivity(intent);
+            }
+        });
     }
 
 }

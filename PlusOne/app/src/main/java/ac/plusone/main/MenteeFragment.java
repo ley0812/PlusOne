@@ -34,8 +34,7 @@ public class MenteeFragment extends Fragment {
     private JSONObject json;
     private ArrayList<BasicNameValuePair> nameValuePairs;
     private ArrayList<BoardVO> menteeList;
-    private String lastDate;
-
+    private String lastNum;
     int size = 0;
 
     @Override
@@ -47,7 +46,7 @@ public class MenteeFragment extends Fragment {
 
         Bundle args = getArguments();
         this.boardList = args.getParcelableArrayList("MenteeList");
-        lastDate = boardList.get(boardList.size()-1).getDate();
+        lastNum = String.valueOf(boardList.get(boardList.size()-1).getNum());
 
         recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(inflater.getContext()));
@@ -95,7 +94,7 @@ public class MenteeFragment extends Fragment {
         protected Object doInBackground(Object[] params) {
             nameValuePairs = new ArrayList<BasicNameValuePair>();
             nameValuePairs.add(new BasicNameValuePair("category", "멘티"));
-            nameValuePairs.add(new BasicNameValuePair("lastDate", lastDate));
+            nameValuePairs.add(new BasicNameValuePair("num", lastNum));
 
             jParser = new JSONParser("BoardMoreServlet", nameValuePairs);
             json = jParser.getJSONText();
@@ -108,7 +107,7 @@ public class MenteeFragment extends Fragment {
             menteeList = new ArrayList<BoardVO>();
 
             try {
-                array1 = new JSONArray(json.getString("Mentor"));
+                array1 = new JSONArray(json.getString("멘티"));
                 for (int i = 0; i < array1.length(); i++) {
                     JSONObject insideObject = array1.getJSONObject(i);
 
@@ -124,8 +123,7 @@ public class MenteeFragment extends Fragment {
                     menteeList.add(vo);
                 }
 
-                size = menteeList.size();
-                lastDate = menteeList.get(size - 1).getDate();
+                lastNum = String.valueOf(boardList.get(boardList.size() - 1).getNum());
 
             } catch (JSONException e) {
                 e.printStackTrace();

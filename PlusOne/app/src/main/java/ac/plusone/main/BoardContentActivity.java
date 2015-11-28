@@ -31,6 +31,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -81,8 +82,7 @@ public class BoardContentActivity extends AppCompatActivity implements View.OnCl
         btnComment.setOnClickListener(this);
 
         builder = new AlertDialog.Builder(BoardContentActivity.this);
-        builder.setTitle("해당 글을 삭제하시겠습니까?");
-        builder.setMessage("");
+        builder.setMessage("해당 글을 삭제하시겠습니까?");
 
         builder.setPositiveButton("삭제", new DialogInterface.OnClickListener() {
             @Override
@@ -153,7 +153,8 @@ public class BoardContentActivity extends AppCompatActivity implements View.OnCl
             newComment.setWriter_id(userID);
             newComment.setWriter(userName);
             newComment.setContent(edtComment.getText().toString());
-            newComment.setDate(new Date().toString());
+            SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd hh:mm a");
+            newComment.setDate(format.format(new Date()));
 
             new CommentWriteTask().execute();
         }else {
@@ -163,6 +164,19 @@ public class BoardContentActivity extends AppCompatActivity implements View.OnCl
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        Intent intent = new Intent(this, BoardActivity.class);
+        int currentPage = 0;
+        if(board.getCategory().equals("멘티")) currentPage = 1;
+        else if(board.getCategory().equals("Q&A")) currentPage = 2;
+        intent.putExtra("currentPage", currentPage);
+        startActivity(intent);
+        finish();
+
+    }
 
     private class CommentLoadingTask extends AsyncTask {
         private ProgressDialog dialog;
@@ -185,7 +199,7 @@ public class BoardContentActivity extends AppCompatActivity implements View.OnCl
 
         @Override
         protected void onPostExecute(Object o) {
-            dialog.dismiss();
+            if(dialog != null) dialog.dismiss();
 
             JSONArray array = null;
             commentList = new ArrayList<CommentVO>();
@@ -238,8 +252,7 @@ public class BoardContentActivity extends AppCompatActivity implements View.OnCl
                 }
 
                 if(result.equals("Success")) {
-                    Intent intent = new Intent(BoardContentActivity.this, BoardActivity.class);
-                    startActivity(intent);
+                    startActivity(new Intent(BoardContentActivity.this, BoardActivity.class));
                     finish();
                 } else {
                     Snackbar snackbar = Snackbar
