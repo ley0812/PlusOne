@@ -1,7 +1,5 @@
 package ac.plusone.main;
 
-import android.util.Log;
-
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -9,8 +7,6 @@ import org.json.JSONObject;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -20,7 +16,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by MinJeong on 2015-11-16.
@@ -28,7 +23,7 @@ import java.util.List;
 public class JSONParser {
 
     //final String url = "http://223.194.141.152:8080/PlusOne/";
-    final String url = "http://223.194.134.152:8080/PlusOne/";
+    final String url = "http://172.30.104.250:8080/PlusOne/";
     //final String url = "http://192.168.1.8:8080/PlusOne/";
 
     String servlet;

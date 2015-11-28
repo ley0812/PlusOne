@@ -58,13 +58,23 @@
         </activity>
         <activity android:name=".map.MapActivity" >
         </activity>
-        <activity android:name=".guide.GuideActivity" />
-        <activity android:name=".guide.Guide1Fragment" />
-        <activity android:name=".guide.Guide2Fragment" />
+        <activity
+            android:name=".guide.GuideActivity"
+            android:label="@string/title_guide"
+            android:theme="@style/AppTheme.NoActionBar"
+            ></activity>
+        <activity android:name=".guide.Guide1Fragment"
+            android:label="@string/title_guide"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity android:name=".guide.Guide2Fragment"
+            android:label="@string/title_guide"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
             android:name=".guide.Guide3Fragment"
-            android:hardwareAccelerated="true" />
-        <activity android:name=".guide.GuideContentview" />
+            android:label="@string/title_guide"
+            android:hardwareAccelerated="true"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity android:name=".guide.GuideContentview"></activity>
         <activity
             android:name=".main.SplashActivity"
             android:label="@string/app_name"

@@ -1,23 +1,31 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".GuideActivity">
 
-    <LinearLayout
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/g_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        app:popupTheme="@style/AppTheme.PopupOverlay" />
 
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
         <Button
             android:id="@+id/btn_a"
-            style="@style/Widget.AppCompat.ActionButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="귀농준비" />
+            android:background="@color/colorPrimary"
+            android:text="귀농준비"
+            android:textColor="#FFFFFF" />
 
         <Button
             android:id="@+id/btn_b"
@@ -25,7 +33,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="지역별상담" />
+            android:background="@color/colorPrimary"
+            android:text="지역별상담"
+            android:textColor="#FFFFFF" />
 
         <Button
             android:id="@+id/btn_c"
@@ -33,7 +43,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="교육정보" />
+            android:background="@color/colorPrimary"
+            android:text="교육정보"
+            android:textColor="#FFFFFF" />
     </LinearLayout>
 
 
