@@ -1,5 +1,6 @@
-package ac.plusone.map;
+package ac.plusone.main;
 
+import android.app.ActionBar;
 import android.content.Context;
 import android.graphics.Point;
 import android.location.Geocoder;
@@ -28,21 +29,43 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
+import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
+import com.google.maps.android.clustering.algo.GridBasedAlgorithm;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import ac.plusone.R;
+import ac.plusone.map.Address;
+import ac.plusone.map.AddressAsync;
+import ac.plusone.map.MyItem;
+import ac.plusone.map.OwnIconRendered;
+import ac.plusone.map.RealEstate;
+import ac.plusone.map.RealEstateAsync;
 
 public class MapActivity extends FragmentActivity implements LocationListener {
     SupportMapFragment mapView;
     GoogleMap googleMap;
-    Marker marker;
+    SlidingDrawer slidingDrawer;
+    RecyclerView recyclerView;
 
     LocationManager locationManager;
-    ClusterManager<MyItem> mClusterManager;
+    ClusterManager<RealEstate> mClusterManager;
+    Marker marker;
+
+    Polygon ChulwonPoly;
+    Polygon ChoonchunPoly;
+    Polygon HongchunPoly;
+    Polygon HoengseongPoly;
+    Polygon HwachunPoly;
+    Polygon InjePoly;
+    Polygon PyeongChangPoly;
+    Polygon YangGuPoly;
+    Polygon JeongSunPoly;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,72 +73,23 @@ public class MapActivity extends FragmentActivity implements LocationListener {
         setContentView(R.layout.map_activity);
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         mapView = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_view);
-        googleMap = mapView.getMap();
-        final EditText editText = (EditText) findViewById(R.id.edit1);
-        final EditText editTex2 = (EditText) findViewById(R.id.edit2);
-        Button btn = (Button) findViewById(R.id.btn1);
+        googleMap = mapView.getMap()    ;
 
-        final TextView txtview = (TextView) findViewById(R.id.text1);
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String address = editText.getText().toString();
-                String count = editTex2.getText().toString();
-                AddressAsync addressAsync = new AddressAsync();
-                ArrayList<Address> addresses = new ArrayList<Address>();
-                try {
-                    addresses = addressAsync.execute(address, count).get();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                }
-                txtview.setText(addresses.get(0).getLocation());
-            }
-        });
+        ActionBar bar = getActionBar();
 
-        setMapPosition(37.494583, 127.019727);
-        setMapPosition(37.494593, 127.029727);
-        setMapPosition(37.494573, 127.023727);
-        setMapPosition(37.494563, 127.021727);
-        setMapPosition(37.472363, 127.021727);
-        setMapPosition(37.464363, 127.021727);
-
-        MyPoint myPoint = findGeoPoint("서울시 은평구  불광동");
-        Log.e("위도 받아오기!!!!!!!!!", myPoint.getLat() + " ");
-        Log.e("경도 받아오기!!!!!!!!!", myPoint.getLon() + " ");
-        setUpClusterer();
-        setPolygon();
-        setPolygon2();
-
-        Button drawerbtn = (Button) findViewById(R.id.drawerbtn);
-
-        RecyclerView recyclerView;
-
-        ArrayList<MyItem> itemlist = new ArrayList<>();
-        itemlist.add(new MyItem(23, 12));
-        itemlist.add(new MyItem(21, 22));
+//       MyPoint myPoint = findGeoPoint("서울시 은평구  불광동");
+//       Log.e("위도 받아오기!!!!!!!!!", myPoint.getLat() + " ");
+//       Log.e("경도 받아오기!!!!!!!!!", myPoint.getLon() + " ");
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        RecyclerAdapter adapter = new RecyclerAdapter(itemlist);
-        recyclerView.setAdapter(adapter);
+        slidingDrawer = (SlidingDrawer) findViewById(R.id.bottom);
 
-        final SlidingDrawer slidingDrawer = (SlidingDrawer) findViewById(R.id.bottom);
-        slidingDrawer.animateClose();
-
-        drawerbtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.e("서랍입니다.", v.getId() + " ");
-                slidingDrawer.animateOpen();
-            }
-        });
-
+        setUpClusterer();
         setMapListener();
-
-        googleMap.getCameraPosition();
-
+        setPolygon();
+        setPolygon2();
+        setPolygon3();
+        setPolygon4();
     }
 
     @Override
@@ -132,32 +106,15 @@ public class MapActivity extends FragmentActivity implements LocationListener {
         googleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
             @Override
             public void onMapLoaded() {
-                LatLngBounds cur_location = getBoundsWithoutSpacing();
-                LatLng northeast = cur_location.northeast;
-                LatLng southwest = cur_location.southwest;
-                Log.e("북동쪽의 위치 받아오기", "위도 : " + northeast.latitude + ", 경도 : " + northeast.longitude);
-                Log.e("남서쪽의 위치 받아오기", "위도 : " + southwest.latitude + ", 경도 : " + southwest.longitude);
-
-                InMapAddressAsync InMapAddressAsync = new InMapAddressAsync();
-                ArrayList<Address> MapAddresses = new ArrayList<Address>();
-                try {
-                    MapAddresses = InMapAddressAsync.execute(southwest.latitude, northeast.latitude, southwest.longitude, northeast.longitude).get();
-                }catch (InterruptedException e) {
-                    e.printStackTrace();
-                }catch (ExecutionException e) {
-                    e.printStackTrace();
-                }
-
-                // 마커를 뿌려준다!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
-
-
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(37.531, 128.135), 8));
+                googleMap.getUiSettings().setRotateGesturesEnabled(false);
+                googleMap.getUiSettings().setTiltGesturesEnabled(false);
+                googleMap.getUiSettings().setMapToolbarEnabled(false);
             }
         });
 
-
         googleMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
+
             @Override
             public void onCameraChange(CameraPosition cameraPosition) {
                 LatLngBounds cur_location = getBoundsWithoutSpacing();
@@ -165,51 +122,136 @@ public class MapActivity extends FragmentActivity implements LocationListener {
                 LatLng southwest = cur_location.southwest;
                 Log.e("북동쪽의 위치 받아오기", "위도 : " + northeast.latitude + ", 경도 : " + northeast.longitude);
                 Log.e("남서쪽의 위치 받아오기", "위도 : " + southwest.latitude + ", 경도 : " + southwest.longitude);
+                Log.e("줌레벨 확인 : ", googleMap.getCameraPosition().zoom + "");
+
+                if (googleMap.getCameraPosition().zoom > 9) {
+                    ChulwonPoly.setVisible(false);
+                    ChoonchunPoly.setVisible(false);
+                    HongchunPoly.setVisible(false);
+                    HoengseongPoly.setVisible(false);
+                    HwachunPoly.setVisible(false);
+                    InjePoly.setVisible(false);
+                    PyeongChangPoly.setVisible(false);
+                    YangGuPoly.setVisible(false);
+                    JeongSunPoly.setVisible(false);
+                } else {
+                    ChulwonPoly.setVisible(true);
+                    ChoonchunPoly.setVisible(true);
+                    HongchunPoly.setVisible(true);
+                    HoengseongPoly.setVisible(true);
+                    HwachunPoly.setVisible(true);
+                    InjePoly.setVisible(true);
+                    PyeongChangPoly.setVisible(true);
+                    YangGuPoly.setVisible(true);
+                    JeongSunPoly.setVisible(true);
+                }
+
+
+              /*  if(googleMap.getCameraPosition().zoom > 18){
+                    InMapAddressAsync InMapAddressAsync = new InMapAddressAsync();
+                    ArrayList<MyItem> myItems = new ArrayList<MyItem>();
+                    try {
+                        myItems = InMapAddressAsync.execute(southwest.latitude, northeast.latitude, southwest.longitude, northeast.longitude).get();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    }
+                    mClusterManager.onCameraChange(cameraPosition);
+                    setUpClusterer();
+                    setMarkers(myItems);
+                }*/
+                if (googleMap.getCameraPosition().zoom > 9) {
+
+                    RealEstateAsync realEstateAsync = new RealEstateAsync();
+                    ArrayList<RealEstate> myItems = new ArrayList<RealEstate>();
+                    try {
+                        myItems = realEstateAsync.execute(southwest.latitude, northeast.latitude, southwest.longitude, northeast.longitude).get();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    }
+                    mClusterManager.clearItems();
+                    setMarkers(myItems);
+//                    mClusterManager.cluster();
+                    mClusterManager.onCameraChange(cameraPosition);
+                } else {
+                    mClusterManager.clearItems();
+                    mClusterManager.cluster();
+                }
             }
         });
+        googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                slidingDrawer.close();
+
+                if (googleMap.getCameraPosition().zoom < 9) {
+                    if (latLng.latitude > 38.11175215569212 && latLng.latitude < 38.32702988272195 && latLng.longitude > 127.22522992640732 && latLng.longitude < 127.49340523034334) {
+                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(38.238131, 127.380756), 10));//철원
+                    } else if (latLng.latitude > 38.067277 && latLng.latitude < 38.220643 && latLng.longitude > 127.524584 && latLng.longitude < 127.850054) {
+                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(38.149400, 127.679766), 13)); //화천
+                    } else if (latLng.latitude > 37.755419 && latLng.latitude < 38.010134 && latLng.longitude > 127.490307 && latLng.longitude < 127.876201) {
+                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(37.898602, 127.744366), 13)); // 춘천
+                    } else if (latLng.latitude > 37.583634 && latLng.latitude < 37.803142 && latLng.longitude > 127.738414 && latLng.longitude < 128.507457) {
+                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(37.748869, 128.070751), 10)); // 홍천
+                    }
+                }
+            }
+        });
+    }
+
+    private void setMarkers(ArrayList<RealEstate> myItems) {
+/*        for (int i = 0; i < myItems.size(); i++) {
+            RealEstate myItem = myItems.get(i);
+            setMapPosition(myItem.getPosition().latitude, myItem.getPosition().longitude); // 마커 추가
+        }*/
+
+        for (int i = 0; i < myItems.size(); i++) {
+            RealEstate myItem = myItems.get(i);
+            mClusterManager.addItem(myItem); // 클러스터 추가
+        }
     }
 
     private void setUpClusterer() {
         // Declare a variable for the cluster manager.
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(37.531, 128.135), 8));
-        mClusterManager = new ClusterManager<MyItem>(this, googleMap);
-        googleMap.setOnCameraChangeListener(mClusterManager);
+        mClusterManager = new ClusterManager<RealEstate>(this, googleMap);
+        mClusterManager.setAlgorithm(new GridBasedAlgorithm<RealEstate>());
+        mClusterManager.setRenderer(new OwnIconRendered(this, googleMap, mClusterManager));
+//        googleMap.setOnCameraChangeListener(mClusterManager);
         googleMap.setOnMarkerClickListener(mClusterManager);
-        mClusterManager.setOnClusterItemClickListener(new ClusterManager.OnClusterItemClickListener<MyItem>() {
+        mClusterManager.setOnClusterItemClickListener(new ClusterManager.OnClusterItemClickListener<RealEstate>() {
             @Override
-            public boolean onClusterItemClick(MyItem myItem) {
+            public boolean onClusterItemClick(RealEstate myItem) {
+                slidingDrawer.close();
+                recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                ac.plusone.map.RecyclerAdapter adapter = new ac.plusone.map.RecyclerAdapter(myItem, getApplicationContext());
+                recyclerView.setAdapter(adapter);
+                slidingDrawer.open();
                 return true;
             }
         });
-        addItems();
-    }
-
-    private void addItems() {
-        MyItem offsetItem1 = new MyItem(37.494583, 127.019727);
-        MyItem offsetItem2 = new MyItem(37.494593, 127.029727);
-        MyItem offsetItem3 = new MyItem(37.494573, 127.023727);
-        MyItem offsetItem4 = new MyItem(37.494563, 127.021727);
-        MyItem offsetItem5 = new MyItem(37.472363, 127.021727);
-        MyItem offsetItem6 = new MyItem(37.464363, 127.021727);
-
-        mClusterManager.addItem(offsetItem1);
-        mClusterManager.addItem(offsetItem2);
-        mClusterManager.addItem(offsetItem3);
-        mClusterManager.addItem(offsetItem4);
-        mClusterManager.addItem(offsetItem5);
-        mClusterManager.addItem(offsetItem6);
+        mClusterManager.setOnClusterClickListener(new ClusterManager.OnClusterClickListener<RealEstate>() {
+            @Override
+            public boolean onClusterClick(Cluster<RealEstate> cluster) {
+                slidingDrawer.close();
+                recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                ac.plusone.map.RecyclerAdapter adapter = new ac.plusone.map.RecyclerAdapter(cluster, getApplicationContext());
+                recyclerView.setAdapter(adapter);
+                slidingDrawer.open();
+                return false;
+            }
+        });
     }
 
     public void setMapPosition(double lat, double lng) {
         LatLng position = new LatLng(lat, lng);
-        if (marker == null) {
-            // 마커가 없는 경우 새로 생성하여 지도에 추가
-            MarkerOptions options = new MarkerOptions();
-            options.position(position);
-            marker = googleMap.addMarker(options);
-        } else {
-            marker.setPosition(position);
-        }
+        // 마커가 없는 경우 새로 생성하여 지도에 추가
+        MarkerOptions options = new MarkerOptions();
+        options.position(position);
+        marker = googleMap.addMarker(options.visible(false));
+
 
         // zoom : 1~21 (값이 커질 수록 확대)
 //        CameraUpdate camera = CameraUpdateFactory.newLatLngZoom(position, 14.5f);
@@ -275,7 +317,7 @@ public class MapActivity extends FragmentActivity implements LocationListener {
     }
 
     public void setPolygon() {
-        Polygon ChulwonPoly = googleMap.addPolygon(new PolygonOptions()
+        ChulwonPoly = googleMap.addPolygon(new PolygonOptions()
                 .add(
                         new LatLng(38.104796, 127.415607),
                         new LatLng(38.109929, 127.420756),
@@ -391,10 +433,10 @@ public class MapActivity extends FragmentActivity implements LocationListener {
                         new LatLng(38.114085, 127.392411),
                         new LatLng(38.112464, 127.403311),
                         new LatLng(38.104796, 127.415607))
-                .strokeColor(0xFF00FF00)
-                .fillColor(0x7F00FF00));
-        // ChulwonPoly.setStrokeWidth(); 스트로크 조절해서 이쁘게~~~
-        Polygon ChoonchunPoly = googleMap.addPolygon(new PolygonOptions()
+                .strokeColor(0xFFF57F17)
+                .fillColor(0x7FFFD740));
+        ChulwonPoly.setStrokeWidth(10);
+        ChoonchunPoly = googleMap.addPolygon(new PolygonOptions()
                 .add(
                         new LatLng(37.67852, 127.6453
                         ), new LatLng(37.67930, 127.6484
@@ -873,18 +915,14 @@ public class MapActivity extends FragmentActivity implements LocationListener {
                         ), new LatLng(37.68171, 127.6405
                         ), new LatLng(37.67968, 127.6419
                         ), new LatLng(37.67852, 127.6453))
-                .strokeColor(0x000000FF)
-                .fillColor(0x7F0000FF));
+                .strokeColor(0xFFF57F17)
+                .fillColor(0x7FFFD740));
+        ChoonchunPoly.setStrokeWidth(10);
     }
 
     public void setPolygon2() {
-//        Polygon HwachunPoly = googleMap.addPolygon(new PolygonOptions()
-//                .add(
-//
-//                .strokeColor(Color.RED)
-//                .fillColor(Color.MAGENTA));
 
-        Polygon HongchunPoly = googleMap.addPolygon(new PolygonOptions()
+        HongchunPoly = googleMap.addPolygon(new PolygonOptions()
                 .add(
                         new LatLng(37.736080, 128.496413
                         ), new LatLng(37.731736, 128.501220
@@ -1127,10 +1165,10 @@ public class MapActivity extends FragmentActivity implements LocationListener {
                         ), new LatLng(37.736131, 128.486587
                         ), new LatLng(37.738303, 128.494483
                         ), new LatLng(37.736080, 128.496413))
-                .strokeColor(0xFFFF0000)
-                .fillColor(0x7FFF0000));
-
-        Polygon HoengseongPoly = googleMap.addPolygon(new PolygonOptions()
+                .strokeColor(0xFFF57F17)
+                .fillColor(0x7FFFD740));
+        HongchunPoly.setStrokeWidth(10);
+        HoengseongPoly = googleMap.addPolygon(new PolygonOptions()
                 .add(new LatLng(37.303461, 128.117432
                 ), new LatLng(37.316022, 128.114342
                 ), new LatLng(37.319572, 128.120521
@@ -1329,8 +1367,590 @@ public class MapActivity extends FragmentActivity implements LocationListener {
                 ), new LatLng(37.311829, 128.063624
                 ), new LatLng(37.303637, 128.068087
                 ), new LatLng(37.297082, 128.089030
-                ), new LatLng(37.303461, 128.117432)).strokeColor(0xFFFFFF00)
-                .fillColor(0x7FFFFF00));
+                ), new LatLng(37.303461, 128.117432)).strokeColor(0xFFF57F17)
+                .fillColor(0x7FFFD740));
+        HoengseongPoly.setStrokeWidth(10);
+    }
+
+    public void setPolygon3() {
+        HwachunPoly = googleMap.addPolygon(new PolygonOptions()
+                .add(new LatLng(37.998164, 127.530286
+                ), new LatLng(38.011014, 127.537152
+                ), new LatLng(38.020210, 127.530972
+                ), new LatLng(38.028594, 127.537496
+                ), new LatLng(38.030082, 127.548310
+                ), new LatLng(38.022374, 127.563931
+                ), new LatLng(38.034003, 127.569596
+                ), new LatLng(38.041709, 127.568223
+                ), new LatLng(38.044278, 127.571999
+                ), new LatLng(38.051713, 127.574918
+                ), new LatLng(38.054957, 127.579553
+                ), new LatLng(38.066040, 127.568395
+                ), new LatLng(38.075770, 127.571656
+                ), new LatLng(38.081851, 127.559640
+                ), new LatLng(38.092660, 127.558095
+                ), new LatLng(38.091714, 127.563760
+                ), new LatLng(38.082392, 127.577664
+                ), new LatLng(38.090025, 127.566935
+                ), new LatLng(38.082594, 127.578265
+                ), new LatLng(38.084486, 127.585475
+                ), new LatLng(38.082189, 127.593715
+                ), new LatLng(38.074892, 127.599894
+                ), new LatLng(38.074216, 127.603156
+                ), new LatLng(38.057593, 127.605388
+                ), new LatLng(38.058269, 127.617061
+                ), new LatLng(38.050699, 127.624099
+                ), new LatLng(38.050835, 127.635085
+                ), new LatLng(38.057593, 127.645900
+                ), new LatLng(38.052051, 127.653624
+                ), new LatLng(38.042994, 127.648646
+                ), new LatLng(38.025282, 127.652423
+                ), new LatLng(38.037045, 127.674739
+                ), new LatLng(38.034476, 127.686755
+                ), new LatLng(38.037586, 127.701518
+                ), new LatLng(38.022577, 127.720916
+                ), new LatLng(38.022036, 127.725894
+                ), new LatLng(38.045157, 127.748382
+                ), new LatLng(38.041642, 127.755591
+                ), new LatLng(38.034882, 127.759540
+                ), new LatLng(38.028527, 127.757995
+                ), new LatLng(38.023659, 127.766234
+                ), new LatLng(38.025146, 127.783400
+                ), new LatLng(38.022983, 127.786147
+                ), new LatLng(38.006618, 127.781169
+                ), new LatLng(37.999855, 127.770526
+                ), new LatLng(37.994714, 127.775332
+                ), new LatLng(37.993091, 127.800223
+                ), new LatLng(38.001072, 127.797133
+                ), new LatLng(38.007971, 127.805888
+                ), new LatLng(38.003642, 127.817218
+                ), new LatLng(38.008782, 127.824084
+                ), new LatLng(38.006077, 127.836272
+                ), new LatLng(38.012705, 127.838675
+                ), new LatLng(38.016086, 127.850863
+                ), new LatLng(38.026634, 127.857215
+                ), new LatLng(38.032042, 127.850863
+                ), new LatLng(38.042318, 127.851035
+                ), new LatLng(38.048807, 127.852408
+                ), new LatLng(38.054755, 127.849490
+                ), new LatLng(38.057458, 127.858073
+                ), new LatLng(38.051105, 127.859103
+                ), new LatLng(38.046914, 127.885539
+                ), new LatLng(38.053944, 127.886912
+                ), new LatLng(38.047590, 127.903048
+                ), new LatLng(38.057863, 127.910602
+                ), new LatLng(38.074216, 127.907855
+                ), new LatLng(38.092457, 127.894637
+                ), new LatLng(38.095024, 127.886912
+                ), new LatLng(38.109748, 127.884166
+                ), new LatLng(38.115286, 127.887256
+                ), new LatLng(38.119067, 127.877471
+                ), new LatLng(38.135407, 127.874896
+                ), new LatLng(38.145262, 127.869574
+                ), new LatLng(38.154307, 127.881076
+                ), new LatLng(38.181569, 127.882621
+                ), new LatLng(38.191149, 127.872321
+                ), new LatLng(38.197085, 127.881076
+                ), new LatLng(38.205314, 127.877814
+                ), new LatLng(38.207202, 127.866313
+                ), new LatLng(38.205449, 127.860305
+                ), new LatLng(38.208821, 127.850520
+                ), new LatLng(38.227163, 127.853953
+                ), new LatLng(38.235523, 127.859103
+                ), new LatLng(38.243208, 127.858416
+                ), new LatLng(38.246714, 127.860133
+                ), new LatLng(38.261003, 127.852408
+                ), new LatLng(38.276771, 127.853438
+                ), new LatLng(38.281622, 127.837645
+                ), new LatLng(38.278388, 127.829062
+                ), new LatLng(38.283778, 127.818419
+                ), new LatLng(38.277445, 127.800567
+                ), new LatLng(38.282700, 127.778766
+                ), new LatLng(38.277175, 127.750613
+                ), new LatLng(38.280140, 127.734477
+                ), new LatLng(38.258711, 127.714736
+                ), new LatLng(38.254263, 127.715766
+                ), new LatLng(38.246714, 127.694823
+                ), new LatLng(38.265855, 127.668731
+                ), new LatLng(38.258981, 127.653796
+                ), new LatLng(38.265451, 127.620665
+                ), new LatLng(38.285665, 127.609336
+                ), new LatLng(38.282835, 127.598006
+                ), new LatLng(38.260059, 127.596118
+                ), new LatLng(38.257768, 127.578265
+                ), new LatLng(38.233770, 127.556807
+                ), new LatLng(38.234714, 127.529342
+                ), new LatLng(38.206798, 127.535865
+                ), new LatLng(38.200053, 127.533118
+                ), new LatLng(38.193038, 127.507884
+                ), new LatLng(38.188720, 127.499301
+                ), new LatLng(38.177926, 127.502047
+                ), new LatLng(38.161731, 127.490889
+                ), new LatLng(38.149312, 127.496554
+                ), new LatLng(38.135271, 127.493808
+                ), new LatLng(38.128385, 127.464625
+                ), new LatLng(38.124199, 127.451922
+                ), new LatLng(38.129600, 127.442653
+                ), new LatLng(38.118392, 127.423083
+                ), new LatLng(38.109613, 127.421367
+                ), new LatLng(38.108667, 127.432696
+                ), new LatLng(38.100022, 127.440078
+                ), new LatLng(38.099887, 127.443854
+                ), new LatLng(38.095159, 127.439219
+                ), new LatLng(38.077730, 127.443854
+                ), new LatLng(38.057728, 127.437674
+                ), new LatLng(38.050159, 127.453811
+                ), new LatLng(38.040560, 127.446601
+                ), new LatLng(38.031772, 127.451579
+                ), new LatLng(38.018926, 127.454669
+                ), new LatLng(38.017303, 127.465655
+                ), new LatLng(38.004454, 127.505481
+                ), new LatLng(38.001884, 127.506854
+                ), new LatLng(37.997961, 127.529342
+                ), new LatLng(38.010946, 127.537238
+                ), new LatLng(37.998164, 127.530286)).strokeColor(0xFFF57F17)
+                .fillColor(0x7FFFD740));
+        HwachunPoly.setStrokeWidth(10);
+        InjePoly = googleMap.addPolygon(new PolygonOptions()
+                .add(
+                        new LatLng(37.806573, 128.204161
+                        ), new LatLng(37.823389, 128.225103
+                        ), new LatLng(37.826643, 128.239180
+                        ), new LatLng(37.834507, 128.247076
+                        ), new LatLng(37.834507, 128.247076
+                        ), new LatLng(37.858636, 128.258749
+                        ), new LatLng(37.870833, 128.294111
+                        ), new LatLng(37.845353, 128.305784
+                        ), new LatLng(37.842641, 128.309904
+                        ), new LatLng(37.831525, 128.305441
+                        ), new LatLng(37.831525, 128.305441
+                        ), new LatLng(37.834778, 128.332563
+                        ), new LatLng(37.827457, 128.342863
+                        ), new LatLng(37.837761, 128.365179
+                        ), new LatLng(37.857009, 128.376852
+                        ), new LatLng(37.858636, 128.399168
+                        ), new LatLng(37.889530, 128.414618
+                        ), new LatLng(37.894678, 128.426291
+                        ), new LatLng(37.896033, 128.447920
+                        ), new LatLng(37.929891, 128.468863
+                        ), new LatLng(37.946679, 128.467146
+                        ), new LatLng(37.956154, 128.475042
+                        ), new LatLng(37.980242, 128.506628
+                        ), new LatLng(38.004323, 128.503195
+                        ), new LatLng(38.011357, 128.509375
+                        ), new LatLng(38.028126, 128.512121
+                        ), new LatLng(38.037861, 128.498388
+                        ), new LatLng(38.054083, 128.489805
+                        ), new LatLng(38.058408, 128.407751
+                        ), new LatLng(38.093813, 128.390928
+                        ), new LatLng(38.098406, 128.404661
+                        ), new LatLng(38.117316, 128.418051
+                        ), new LatLng(38.105700, 128.458220
+                        ), new LatLng(38.132981, 128.475386
+                        ), new LatLng(38.146752, 128.444487
+                        ), new LatLng(38.164570, 128.443113
+                        ), new LatLng(38.181573, 128.409468
+                        ), new LatLng(38.198843, 128.430410
+                        ), new LatLng(38.223931, 128.440024
+                        ), new LatLng(38.236606, 128.427321
+                        ), new LatLng(38.246583, 128.432814
+                        ), new LatLng(38.263298, 128.407751
+                        ), new LatLng(38.251976, 128.389555
+                        ), new LatLng(38.237685, 128.382689
+                        ), new LatLng(38.251706, 128.347326
+                        ), new LatLng(38.257907, 128.359686
+                        ), new LatLng(38.261681, 128.356253
+                        ), new LatLng(38.261142, 128.315054
+                        ), new LatLng(38.336584, 128.301664
+                        ), new LatLng(38.353278, 128.262869
+                        ), new LatLng(38.388539, 128.257032
+                        ), new LatLng(38.393921, 128.223730
+                        ), new LatLng(38.376429, 128.206564
+                        ), new LatLng(38.354086, 128.155752
+                        ), new LatLng(38.318539, 128.178755
+                        ), new LatLng(38.307494, 128.166395
+                        ), new LatLng(38.295639, 128.171888
+                        ), new LatLng(38.283513, 128.167769
+                        ), new LatLng(38.281357, 128.171888
+                        ), new LatLng(38.277045, 128.165022
+                        ), new LatLng(38.255481, 128.158842
+                        ), new LatLng(38.254133, 128.144423
+                        ), new LatLng(38.233370, 128.144423
+                        ), new LatLng(38.220694, 128.125540
+                        ), new LatLng(38.189129, 128.117300
+                        ), new LatLng(38.178875, 128.098761
+                        ), new LatLng(38.155931, 128.085371
+                        ), new LatLng(38.138651, 128.085714
+                        ), new LatLng(38.130280, 128.096014
+                        ), new LatLng(38.104079, 128.099104
+                        ), new LatLng(38.098136, 128.085371
+                        ), new LatLng(38.068410, 128.115584
+                        ), new LatLng(38.060841, 128.111120
+                        ), new LatLng(38.048946, 128.120390
+                        ), new LatLng(38.029207, 128.101164
+                        ), new LatLng(38.035427, 128.078848
+                        ), new LatLng(38.048135, 128.071295
+                        ), new LatLng(38.051109, 128.060309
+                        ), new LatLng(38.018930, 128.059622
+                        ), new LatLng(38.021364, 128.045546
+                        ), new LatLng(38.011898, 128.021513
+                        ), new LatLng(37.999454, 128.013960
+                        ), new LatLng(38.000536, 128.005034
+                        ), new LatLng(37.986466, 127.986151
+                        ), new LatLng(37.985925, 127.981001
+                        ), new LatLng(37.982949, 127.980314
+                        ), new LatLng(37.979972, 127.984778
+                        ), new LatLng(37.975101, 127.984778
+                        ), new LatLng(37.972394, 127.979284
+                        ), new LatLng(37.964274, 127.976881
+                        ), new LatLng(37.960214, 127.985121
+                        ), new LatLng(37.942617, 127.989241
+                        ), new LatLng(37.940181, 128.000570
+                        ), new LatLng(37.946137, 128.026663
+                        ), new LatLng(37.919058, 128.042456
+                        ), new LatLng(37.897388, 128.089834
+                        ), new LatLng(37.895220, 128.160559
+                        ), new LatLng(37.885195, 128.165365
+                        ), new LatLng(37.884111, 128.173605
+                        ), new LatLng(37.871646, 128.166739
+                        ), new LatLng(37.861617, 128.169485
+                        ), new LatLng(37.857280, 128.176695
+                        ), new LatLng(37.832067, 128.178412
+                        ), new LatLng(37.823932, 128.191115
+                        ), new LatLng(37.808743, 128.196264
+                        ), new LatLng(37.806573, 128.204161)).strokeColor(0xFFF57F17)
+                .fillColor(0x7FFFD740));
+        InjePoly.setStrokeWidth(10);
+    }
+
+    public void setPolygon4() {
+        PyeongChangPoly = googleMap.addPolygon(new PolygonOptions()
+                .add(
+                        new LatLng(37.316498, 128.330384
+                        ), new LatLng(37.322232, 128.331071
+                        ), new LatLng(37.320048, 128.324547
+                        ), new LatLng(37.347073, 128.323518
+                        ), new LatLng(37.371087, 128.322831
+                        ), new LatLng(37.375180, 128.326951
+                        ), new LatLng(37.379545, 128.324891
+                        ), new LatLng(37.378999, 128.316308
+                        ), new LatLng(37.387456, 128.294678
+                        ), new LatLng(37.399458, 128.290215
+                        ), new LatLng(37.400549, 128.267213
+                        ), new LatLng(37.412821, 128.257256
+                        ), new LatLng(37.423455, 128.258630
+                        ), new LatLng(37.479329, 128.244897
+                        ), new LatLng(37.483960, 128.266526
+                        ), new LatLng(37.511471, 128.297082
+                        ), new LatLng(37.527537, 128.303948
+                        ), new LatLng(37.551221, 128.297425
+                        ), new LatLng(37.556393, 128.302918
+                        ), new LatLng(37.578163, 128.284379
+                        ), new LatLng(37.585237, 128.285409
+                        ), new LatLng(37.589318, 128.278542
+                        ), new LatLng(37.598023, 128.276826
+                        ), new LatLng(37.603192, 128.280945
+                        ), new LatLng(37.617878, 128.279572
+                        ), new LatLng(37.632018, 128.272362
+                        ), new LatLng(37.652407, 128.285065
+                        ), new LatLng(37.676052, 128.276482
+                        ), new LatLng(37.684747, 128.288155
+                        ), new LatLng(37.700775, 128.309098
+                        ), new LatLng(37.689637, 128.322488
+                        ), new LatLng(37.694255, 128.338280
+                        ), new LatLng(37.699960, 128.341370
+                        ), new LatLng(37.696429, 128.363000
+                        ), new LatLng(37.689909, 128.372269
+                        ), new LatLng(37.688007, 128.412095
+                        ), new LatLng(37.699145, 128.438531
+                        ), new LatLng(37.743139, 128.468400
+                        ), new LatLng(37.730378, 128.517838
+                        ), new LatLng(37.748840, 128.539468
+                        ), new LatLng(37.765398, 128.539468
+                        ), new LatLng(37.779238, 128.528138
+                        ), new LatLng(37.807454, 128.530541
+                        ), new LatLng(37.814235, 128.544274
+                        ), new LatLng(37.808267, 128.586503
+                        ), new LatLng(37.767569, 128.594056
+                        ), new LatLng(37.766212, 128.609849
+                        ), new LatLng(37.772997, 128.610879
+                        ), new LatLng(37.775982, 128.624612
+                        ), new LatLng(37.781138, 128.625642
+                        ), new LatLng(37.797145, 128.660317
+                        ), new LatLng(37.786836, 128.683320
+                        ), new LatLng(37.783580, 128.720399
+                        ), new LatLng(37.749926, 128.745804
+                        ), new LatLng(37.724947, 128.757134
+                        ), new LatLng(37.679856, 128.763314
+                        ), new LatLng(37.673606, 128.758164
+                        ), new LatLng(37.656484, 128.739281
+                        ), new LatLng(37.638543, 128.718682
+                        ), new LatLng(37.631202, 128.728638
+                        ), new LatLng(37.632018, 128.734818
+                        ), new LatLng(37.627396, 128.731042
+                        ), new LatLng(37.612167, 128.730355
+                        ), new LatLng(37.611079, 128.720055
+                        ), new LatLng(37.607815, 128.720055
+                        ), new LatLng(37.608087, 128.723832
+                        ), new LatLng(37.606727, 128.723832
+                        ), new LatLng(37.605911, 128.719712
+                        ), new LatLng(37.596663, 128.716622
+                        ), new LatLng(37.593943, 128.705636
+                        ), new LatLng(37.591767, 128.681603
+                        ), new LatLng(37.579796, 128.674737
+                        ), new LatLng(37.570544, 128.676110
+                        ), new LatLng(37.569728, 128.667870
+                        ), new LatLng(37.562108, 128.668214
+                        ), new LatLng(37.558298, 128.675423
+                        ), new LatLng(37.554488, 128.669930
+                        ), new LatLng(37.558570, 128.665467
+                        ), new LatLng(37.556937, 128.665467
+                        ), new LatLng(37.556937, 128.663407
+                        ), new LatLng(37.560203, 128.662034
+                        ), new LatLng(37.559387, 128.659974
+                        ), new LatLng(37.553127, 128.659630
+                        ), new LatLng(37.555304, 128.656884
+                        ), new LatLng(37.558842, 128.654824
+                        ), new LatLng(37.554216, 128.654137
+                        ), new LatLng(37.553943, 128.645898
+                        ), new LatLng(37.547139, 128.634911
+                        ), new LatLng(37.555304, 128.626328
+                        ), new LatLng(37.563741, 128.625642
+                        ), new LatLng(37.569728, 128.618775
+                        ), new LatLng(37.574898, 128.616715
+                        ), new LatLng(37.579796, 128.594056
+                        ), new LatLng(37.559931, 128.590279
+                        ), new LatLng(37.540878, 128.588906
+                        ), new LatLng(37.534888, 128.577576
+                        ), new LatLng(37.529715, 128.583070
+                        ), new LatLng(37.521819, 128.584443
+                        ), new LatLng(37.498398, 128.577233
+                        ), new LatLng(37.492133, 128.584443
+                        ), new LatLng(37.485459, 128.583072
+                        ), new LatLng(37.475923, 128.571056
+                        ), new LatLng(37.463661, 128.552173
+                        ), new LatLng(37.465296, 128.520930
+                        ), new LatLng(37.436951, 128.521617
+                        ), new LatLng(37.418957, 128.510631
+                        ), new LatLng(37.407231, 128.520244
+                        ), new LatLng(37.402594, 128.528484
+                        ), new LatLng(37.400685, 128.538097
+                        ), new LatLng(37.372042, 128.556979
+                        ), new LatLng(37.359763, 128.553889
+                        ), new LatLng(37.353214, 128.548396
+                        ), new LatLng(37.351576, 128.560069
+                        ), new LatLng(37.345845, 128.565906
+                        ), new LatLng(37.315543, 128.579982
+                        ), new LatLng(37.310628, 128.586848
+                        ), new LatLng(37.299431, 128.581012
+                        ), new LatLng(37.293150, 128.584788
+                        ), new LatLng(37.287960, 128.584788
+                        ), new LatLng(37.281950, 128.595431
+                        ), new LatLng(37.272935, 128.581699
+                        ), new LatLng(37.279219, 128.573116
+                        ), new LatLng(37.277853, 128.567966
+                        ), new LatLng(37.287960, 128.553889
+                        ), new LatLng(37.287414, 128.541873
+                        ), new LatLng(37.283589, 128.536723
+                        ), new LatLng(37.290418, 128.529857
+                        ), new LatLng(37.284136, 128.519557
+                        ), new LatLng(37.290145, 128.498271
+                        ), new LatLng(37.304074, 128.496555
+                        ), new LatLng(37.304074, 128.476985
+                        ), new LatLng(37.307897, 128.472179
+                        ), new LatLng(37.306532, 128.463939
+                        ), new LatLng(37.311447, 128.458102
+                        ), new LatLng(37.316908, 128.463596
+                        ), new LatLng(37.321550, 128.463939
+                        ), new LatLng(37.335200, 128.451236
+                        ), new LatLng(37.339840, 128.433726
+                        ), new LatLng(37.346664, 128.423427
+                        ), new LatLng(37.341478, 128.415874
+                        ), new LatLng(37.337929, 128.410037
+                        ), new LatLng(37.329740, 128.412784
+                        ), new LatLng(37.316635, 128.402484
+                        ), new LatLng(37.313631, 128.406261
+                        ), new LatLng(37.296700, 128.407977
+                        ), new LatLng(37.295335, 128.402484
+                        ), new LatLng(37.297519, 128.398021
+                        ), new LatLng(37.291784, 128.389095
+                        ), new LatLng(37.289052, 128.379481
+                        ), new LatLng(37.290145, 128.371928
+                        ), new LatLng(37.296154, 128.373302
+                        ), new LatLng(37.297246, 128.365405
+                        ), new LatLng(37.308443, 128.356822
+                        ), new LatLng(37.316635, 128.335880)).strokeColor(0xFFF57F17)
+                .fillColor(0x7FFFD740));
+        PyeongChangPoly.setStrokeWidth(10);
+        YangGuPoly = googleMap.addPolygon(new PolygonOptions()
+                .add(
+                        new LatLng(38.353988, 128.156626
+                        ), new LatLng(38.316825, 128.177225
+                        ), new LatLng(38.255922, 128.160059
+                        ), new LatLng(38.253765, 128.142893
+                        ), new LatLng(38.234351, 128.142893
+                        ), new LatLng(38.220327, 128.125040
+                        ), new LatLng(38.189571, 128.117487
+                        ), new LatLng(38.179317, 128.099634
+                        ), new LatLng(38.157183, 128.084528
+                        ), new LatLng(38.135583, 128.086588
+                        ), new LatLng(38.129102, 128.096201
+                        ), new LatLng(38.105873, 128.096888
+                        ), new LatLng(38.096687, 128.084528
+                        ), new LatLng(38.071826, 128.111994
+                        ), new LatLng(38.061014, 128.111307
+                        ), new LatLng(38.049660, 128.120234
+                        ), new LatLng(38.030191, 128.100321
+                        ), new LatLng(38.036681, 128.078348
+                        ), new LatLng(38.050741, 128.070795
+                        ), new LatLng(38.051822, 128.059122
+                        ), new LatLng(38.031814, 128.055689
+                        ), new LatLng(38.019914, 128.057749
+                        ), new LatLng(38.020996, 128.042643
+                        ), new LatLng(38.015587, 128.025477
+                        ), new LatLng(38.020996, 128.011744
+                        ), new LatLng(38.010177, 127.999384
+                        ), new LatLng(38.001520, 127.999384
+                        ), new LatLng(38.008013, 127.984278
+                        ), new LatLng(38.032895, 127.983591
+                        ), new LatLng(38.041548, 127.954066
+                        ), new LatLng(38.020996, 127.945826
+                        ), new LatLng(38.027487, 127.916300
+                        ), new LatLng(38.027487, 127.904627
+                        ), new LatLng(38.027487, 127.904627
+                        ), new LatLng(38.094525, 127.895701
+                        ), new LatLng(38.104792, 127.881281
+                        ), new LatLng(38.119311, 127.876904
+                        ), new LatLng(38.134571, 127.875015
+                        ), new LatLng(38.144157, 127.869179
+                        ), new LatLng(38.148612, 127.871067
+                        ), new LatLng(38.153876, 127.881367
+                        ), new LatLng(38.163055, 127.878964
+                        ), new LatLng(38.171422, 127.884113
+                        ), new LatLng(38.181543, 127.882054
+                        ), new LatLng(38.185726, 127.873985
+                        ), new LatLng(38.191123, 127.872784
+                        ), new LatLng(38.197059, 127.880852
+                        ), new LatLng(38.204748, 127.878449
+                        ), new LatLng(38.207311, 127.865917
+                        ), new LatLng(38.205288, 127.860424
+                        ), new LatLng(38.207716, 127.854588
+                        ), new LatLng(38.206772, 127.851841
+                        ), new LatLng(38.208660, 127.850468
+                        ), new LatLng(38.212707, 127.852528
+                        ), new LatLng(38.226598, 127.853901
+                        ), new LatLng(38.230508, 127.858021
+                        ), new LatLng(38.243857, 127.858708
+                        ), new LatLng(38.247766, 127.860253
+                        ), new LatLng(38.260977, 127.853043
+                        ), new LatLng(38.277150, 127.853729
+                        ), new LatLng(38.292645, 127.867977
+                        ), new LatLng(38.320798, 127.871754
+                        ), new LatLng(38.331841, 127.884628
+                        ), new LatLng(38.332110, 127.894413
+                        ), new LatLng(38.320798, 127.948830
+                        ), new LatLng(38.317701, 128.012001
+                        ), new LatLng(38.310023, 128.053372
+                        ), new LatLng(38.335073, 128.114311
+                        ), new LatLng(38.336150, 128.127873
+                        ), new LatLng(38.353988, 128.156626)).strokeColor(0xFFF57F17)
+                .fillColor(0x7FFFD740));
+        YangGuPoly.setStrokeWidth(10);
+        JeongSunPoly = googleMap.addPolygon(new PolygonOptions()
+                .add(
+                        new LatLng(37.146623, 128.919552
+                        ), new LatLng(37.144160, 128.907879
+                        ), new LatLng(37.148812, 128.887623
+                        ), new LatLng(37.164956, 128.878696
+                        ), new LatLng(37.172616, 128.880413
+                        ), new LatLng(37.177814, 128.872517
+                        ), new LatLng(37.173163, 128.858097
+                        ), new LatLng(37.164409, 128.852261
+                        ), new LatLng(37.170428, 128.833035
+                        ), new LatLng(37.187661, 128.832691
+                        ), new LatLng(37.186020, 128.811062
+                        ), new LatLng(37.192037, 128.810375
+                        ), new LatLng(37.189029, 128.800419
+                        ), new LatLng(37.190123, 128.792866
+                        ), new LatLng(37.201062, 128.783596
+                        ), new LatLng(37.206804, 128.759563
+                        ), new LatLng(37.213093, 128.750637
+                        ), new LatLng(37.212000, 128.734501
+                        ), new LatLng(37.199968, 128.727634
+                        ), new LatLng(37.197507, 128.714588
+                        ), new LatLng(37.190943, 128.712185
+                        ), new LatLng(37.185473, 128.696049
+                        ), new LatLng(37.180549, 128.690212
+                        ), new LatLng(37.186567, 128.675106
+                        ), new LatLng(37.184379, 128.662746
+                        ), new LatLng(37.190396, 128.658970
+                        ), new LatLng(37.188755, 128.653820
+                        ), new LatLng(37.183558, 128.651073
+                        ), new LatLng(37.185199, 128.644894
+                        ), new LatLng(37.185746, 128.638371
+                        ), new LatLng(37.195319, 128.634251
+                        ), new LatLng(37.196413, 128.629444
+                        ), new LatLng(37.207351, 128.616055
+                        ), new LatLng(37.212000, 128.621891
+                        ), new LatLng(37.216921, 128.617771
+                        ), new LatLng(37.217194, 128.603695
+                        ), new LatLng(37.213914, 128.599918
+                        ), new LatLng(37.219382, 128.583782
+                        ), new LatLng(37.218561, 128.577946
+                        ), new LatLng(37.229770, 128.576572
+                        ), new LatLng(37.233870, 128.571423
+                        ), new LatLng(37.246170, 128.563526
+                        ), new LatLng(37.252729, 128.567303
+                        ), new LatLng(37.253822, 128.561810
+                        ), new LatLng(37.270490, 128.567646
+                        ), new LatLng(37.270216, 128.573826
+                        ), new LatLng(37.267757, 128.575886
+                        ), new LatLng(37.268850, 128.581036
+                        ), new LatLng(37.273495, 128.582066
+                        ), new LatLng(37.282237, 128.595455
+                        ), new LatLng(37.288792, 128.584812
+                        ), new LatLng(37.299444, 128.580349
+                        ), new LatLng(37.310368, 128.586872
+                        ), new LatLng(37.325931, 128.570736
+                        ), new LatLng(37.351862, 128.559406
+                        ), new LatLng(37.352954, 128.549450
+                        ), new LatLng(37.357048, 128.549793
+                        ), new LatLng(37.359504, 128.553226
+                        ), new LatLng(37.372055, 128.556660
+                        ), new LatLng(37.400698, 128.537777
+                        ), new LatLng(37.402335, 128.528164
+                        ), new LatLng(37.406971, 128.521641
+                        ), new LatLng(37.404789, 128.514431
+                        ), new LatLng(37.409153, 128.517521
+                        ), new LatLng(37.419242, 128.508938
+                        ), new LatLng(37.421696, 128.513058
+                        ), new LatLng(37.437236, 128.521297
+                        ), new LatLng(37.465309, 128.520611
+                        ), new LatLng(37.463674, 128.551853
+                        ), new LatLng(37.476481, 128.567989
+                        ), new LatLng(37.491465, 128.557346
+                        ), new LatLng(37.497186, 128.565243
+                        ), new LatLng(37.497730, 128.576572
+                        ), new LatLng(37.517067, 128.578976
+                        ), new LatLng(37.521969, 128.584812
+                        ), new LatLng(37.530137, 128.583096
+                        ), new LatLng(37.296986, 128.857067
+                        ), new LatLng(37.291251, 128.874233
+                        ), new LatLng(37.279232, 128.876636
+                        ), new LatLng(37.277593, 128.884876
+                        ), new LatLng(37.273495, 128.886250
+                        ), new LatLng(37.265298, 128.880413
+                        ), new LatLng(37.262839, 128.885906
+                        ), new LatLng(37.242070, 128.900669
+                        ), new LatLng(37.218561, 128.906162
+                        ), new LatLng(37.212000, 128.917492
+                        ), new LatLng(37.198601, 128.913372
+                        ), new LatLng(37.196139, 128.907192
+                        ), new LatLng(37.183832, 128.912685
+                        ), new LatLng(37.168239, 128.911655
+                        ), new LatLng(37.155927, 128.910282)).strokeColor(0xFFF57F17)
+                .fillColor(0x7FFFD740));
+        JeongSunPoly.setStrokeWidth(10);
     }
 
     @Override

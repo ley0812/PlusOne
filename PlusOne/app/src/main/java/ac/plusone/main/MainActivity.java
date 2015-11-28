@@ -1,4 +1,4 @@
-package ac.plusone.main;
+﻿package ac.plusone.main;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -40,7 +40,7 @@ import java.util.ArrayList;
 
 import ac.plusone.R;
 import ac.plusone.guide.GuideActivity;
-import ac.plusone.map.MapActivity;
+import ac.plusone.main.MapActivity;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
