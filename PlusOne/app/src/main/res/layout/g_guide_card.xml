@@ -9,32 +9,46 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         card:cardCornerRadius="3dp"
-        android:layout_marginBottom="10dp">
-
+        android:layout_marginBottom="15dp">
         <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="match_parent"
+            android:background="#f3f3f3">
 
-            <TextView
-                android:id="@+id/tv_cardname"
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/g_guide"
+                android:layout_marginLeft="12dp"
+                android:layout_marginTop="12dp" />
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="name"
-                android:textSize="20dp"
-                android:padding="10dp"
-                android:scaleType="fitXY" />
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tv_cardsub"
-                android:text="sub"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center|left"
-                android:padding="10dp"
-                android:layout_marginLeft="10dp" />
+                <TextView
+                    android:id="@+id/tv_cardname"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="name"
+                    android:textSize="20dp"
+                    android:padding="10dp"
+                    android:scaleType="fitXY" />
+
+                <TextView
+                    android:id="@+id/tv_cardsub"
+                    android:text="sub"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center|left"
+                    android:padding="10dp"
+                    android:layout_marginLeft="15dp" />
+            </LinearLayout>
         </LinearLayout>
     </android.support.v7.widget.CardView>
+
+
 
 
 </RelativeLayout>
