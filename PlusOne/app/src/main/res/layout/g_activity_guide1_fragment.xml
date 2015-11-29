@@ -4,7 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Guide1Fragment">
+    tools:context=".Guide1Fragment"
+    android:clickable="true"
+    android:background="#FFFFFF">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/my_recycler_view"

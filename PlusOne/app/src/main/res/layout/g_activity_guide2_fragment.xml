@@ -3,8 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical"
-    android:paddingLeft="5dp"
-    android:paddingRight="5dp">
+    android:background="#f3f3f3">
 
     <Spinner
         android:id="@+id/spinner1"
@@ -13,13 +12,17 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:verticalScrollbarPosition="left"
-        android:layout_margin="5dp" />
+        android:layout_margin="7dp" />
 
     <ExpandableListView
         android:id="@+id/elv_list"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        />
+        android:background="#FFFFFF" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"></RelativeLayout>
 
 
 </LinearLayout>

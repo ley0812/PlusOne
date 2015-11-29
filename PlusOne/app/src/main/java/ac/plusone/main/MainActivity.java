@@ -1,10 +1,12 @@
-﻿package ac.plusone.main;
+package ac.plusone.main;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.Image;
+import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -36,11 +38,11 @@ import com.google.android.gms.common.api.Status;
 import com.pkmmte.view.CircularImageView;
 
 import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 
 import ac.plusone.R;
 import ac.plusone.guide.GuideActivity;
-import ac.plusone.main.MapActivity;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -68,7 +70,10 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.br_activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        toolbar.setLogo(R.drawable.logo);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        TextView toolbarTitle = (TextView) findViewById(R.id.toolbar_title);
+        toolbarTitle.setTypeface(Typeface.createFromAsset(getAssets(), "NanumBrush.ttf"));
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -95,7 +100,7 @@ public class MainActivity extends AppCompatActivity
             updateUI(true);
             profileName.setText(userPref.getString("currentUserName", getString(R.string.please_login)));
             profileEmail.setText(userPref.getString("currentUserEmail", ""));
-            new LoadProfileImage().execute(userPref.getString("currentUserPhoto", "a"));
+            new LoadProfileImage().execute(userPref.getString("currentUserPhoto", ""));
         }
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -131,14 +136,14 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
             }
         });
-        mapBtn = (Button)findViewById(R.id.mapbtn);
-        mapBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, MapActivity.class);
-                startActivity(intent);
-            }
-        });
+//        mapBtn = (Button)findViewById(R.id.mapbtn);
+//        mapBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(MainActivity.this, MapActivity.class);
+//                startActivity(intent);
+//            }
+//        });
         btn_guide = (ImageView) findViewById(R.id.btn_guide);
         btn_guide.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -164,24 +169,34 @@ public class MainActivity extends AppCompatActivity
         GoogleSignInAccount acct = null;
         if (result.isSuccess()) {
 
+            Log.d("###", "handleSignInResult : Success");
+
             acct = result.getSignInAccount();
             profileName.setText(acct.getDisplayName());
             profileEmail.setText(acct.getEmail());
-            new LoadProfileImage().execute(acct.getPhotoUrl().toString());
-
+            
             updateUI(true);
 
             SharedPreferences userPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
             SharedPreferences.Editor editor = userPref.edit();
             editor.putString("currentUser", acct.getId());
             editor.putString("currentUserName", acct.getDisplayName());
-            editor.putString("currentUserPhoto", acct.getPhotoUrl().toString());
             editor.putString("currentUserEmail", acct.getEmail().toString());
+
+            try {
+                new LoadProfileImage().execute(acct.getPhotoUrl().toString());
+                editor.putString("currentUserPhoto", acct.getPhotoUrl().toString());
+            }catch (NullPointerException ne) {
+                ne.printStackTrace();
+            }
+
             editor.commit();
 
             DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
             drawer.closeDrawer(GravityCompat.START);
         } else {
+
+            Log.d("###", result.getStatus().toString());
             updateUI(false);
         }
     }
@@ -192,7 +207,7 @@ public class MainActivity extends AppCompatActivity
             profileImg2.setVisibility(View.VISIBLE);
             signOut.setVisible(true);
             write.setVisible(true);
-            revoke.setVisible(true);
+            //revoke.setVisible(true);
         }else {
             signInButton.setVisibility(View.GONE);
             profileName.setText(getString(R.string.please_login));
@@ -264,15 +279,20 @@ public class MainActivity extends AppCompatActivity
     private class LoadProfileImage extends AsyncTask<String, Void, Bitmap> {
 
         protected Bitmap doInBackground(String... urls) {
-            String personPhotoUrl = urls[0].substring(0, urls[0].toString().length() - 2) + PROFILE_PIC_SIZE;
-            Bitmap profileImage = null;
-            try {
-                InputStream in = new java.net.URL(personPhotoUrl).openStream();
-                profileImage = BitmapFactory.decodeStream(in);
-            } catch (Exception e) {
-                Log.e("Error", e.getMessage());
-                e.printStackTrace();
+            Bitmap profileImage = BitmapFactory.decodeResource(getResources(), R.drawable.ic_profile);
+
+            if(urls[0].length() != 0) {
+                String personPhotoUrl = urls[0].substring(0, urls[0].toString().length() - 2) + PROFILE_PIC_SIZE;
+
+                try {
+                    InputStream in = new java.net.URL(personPhotoUrl).openStream();
+                    profileImage = BitmapFactory.decodeStream(in);
+                } catch (Exception e) {
+                    Log.e("Error", e.getMessage());
+                    e.printStackTrace();
+                }
             }
+
             return profileImage;
         }
         protected void onPostExecute(Bitmap result) {

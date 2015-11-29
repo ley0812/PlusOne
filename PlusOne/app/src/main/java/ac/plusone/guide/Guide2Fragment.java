@@ -27,8 +27,8 @@ public class Guide2Fragment extends Fragment {
 
     private ExpandableListAdapter listAdapter = null;
     private ExpandableListView expListView = null;
-    private List<String> listDataHeader = null;
-    private HashMap<String, List<String>> listDataChild = null;
+    private List<String> listDataHeader = new ArrayList<String>();
+    private HashMap<String, List<String>> listDataChild = new HashMap<String, List<String>>();
 
     private Spinner mSpinner;
     private ArrayList<String> mList;
@@ -48,28 +48,26 @@ public class Guide2Fragment extends Fragment {
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         v = inflater.inflate(R.layout.g_activity_guide2_fragment, container, false);
-        //View header = inflater.inflate(R.layout.g_guide2_list_header, null, false);
 
-
-        initSpinner();
-        initcsvfile();
+        initSpinner(); //스피너 초기화
+        initcsvfile(); //csv 초기화
 
         expListView = (ExpandableListView) v.findViewById(R.id.elv_list);
+
+        setData();
 
         AdapterView.OnItemSelectedListener mItemSelectedListener = new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String strItem = mList.get(position);
 
-                listDataHeader = new ArrayList<String>();
-                listDataChild = new HashMap<String, List<String>>();
-
                 if (refresh_num != 0) {
-
-                    listDataHeader = new ArrayList<String>();
-                    listDataChild = new HashMap<String, List<String>>();
+                    listAdapter.get_listDataChild().clear();
                     //listAdapter.get_listDataChild().clear();
 //                    listAdapter = new ExpandableListAdapter(v.getContext(), listDataHeader, listDataChild);
 //                    expListView.setAdapter(listAdapter);
+                    e_list1 = new ArrayList<String>();
+                    e_list2 = new ArrayList<String>();
+                    e_list3 = new ArrayList<String>();
                 }
 
                 for (int m = 0; m < mData.size(); m++) {
@@ -81,61 +79,39 @@ public class Guide2Fragment extends Fragment {
                         call = mData.get(m).getCALL_NUL();
                         if (mData.get(m).CTGRY_NM.equals("기술상담/농기계임대")) {
                             e_list1.add("지역 : " + local + "\n" + "기관명 : " + gov + "\n" + "주소 : " + addr + "\n" + "전화 : " + call);
-                            //mAdapter1.addItem(mData.get(m).getLOCAL(), mData.get(m).getGOV_NM(), mData.get(m).getADDR(), mData.get(m).getCALL_NUL());
                         } else if (mData.get(m).CTGRY_NM.equals("농지/주택")) {
                             e_list2.add("지역 : " + local + "\n" + "기관명 : " + gov + "\n" + "구분 : " + div + "\n" + "전화 : " + call);
-                            //mAdapter2.addItem(mData.get(m).getLOCAL(), mData.get(m).getGOV_NM(), mData.get(m).getDIV(), mData.get(m).getCALL_NUL());
                         } else if (mData.get(m).CTGRY_NM.equals("금융")) {
                             e_list3.add("지역 : " + local + "\n" + "기관명 : " + gov + "\n" + "주소 : " + addr + "\n" + "전화 : " + call);
-                            //mAdapter3.addItem(mData.get(m).getLOCAL(), mData.get(m).getGOV_NM(), mData.get(m).getADDR(), mData.get(m).getCALL_NUL());
                         }
                     }
+                    listAdapter.notifyDataSetChanged();
                 }
-                listAdapter.notifyDataSetChanged();
-                refresh_num++;
-                System.out.println(listAdapter.getChildrenCount(0));
-
-                listDataHeader.add("기술상담/농기계임대");
-                listDataHeader.add("농지/주택");
-                listDataHeader.add("금융");
 
                 listDataChild.put(listDataHeader.get(0), e_list1);
                 listDataChild.put(listDataHeader.get(1), e_list2);
                 listDataChild.put(listDataHeader.get(2), e_list3);
 
+                listAdapter.notifyDataSetChanged();
+                refresh_num++;
+
+
                 expListView.setAdapter(listAdapter);
                 listAdapter = new ExpandableListAdapter(v.getContext(), listDataHeader, listDataChild);
 
+                //모든항목 열기
                 int groupCount = (int) listAdapter.getGroupCount();
                 for (int i = 0; i < groupCount; i++) {
                     expListView.expandGroup(i);
                 }
             }
-
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                //mText.setText("NoItem Selected.");
             }
         };
         mSpinner.setOnItemSelectedListener(mItemSelectedListener);
 
-
-        listDataHeader = new ArrayList<String>();
-        listDataChild = new HashMap<String, List<String>>();
         listAdapter = new ExpandableListAdapter(v.getContext(), listDataHeader, listDataChild);
-
-        listDataHeader.add("기술상담/농기계임대");
-        listDataHeader.add("농지/주택");
-        listDataHeader.add("금융");
-
-        e_list1 = new ArrayList<String>();
-        e_list2 = new ArrayList<String>();
-        e_list3 = new ArrayList<String>();
-
-        listDataChild.put(listDataHeader.get(0), e_list1);
-        listDataChild.put(listDataHeader.get(1), e_list2);
-        listDataChild.put(listDataHeader.get(2), e_list3);
-
         expListView.setAdapter(listAdapter);
 
 
@@ -151,14 +127,22 @@ public class Guide2Fragment extends Fragment {
         return v;
     }
 
+    private void setData(){
+        listDataHeader.add("기술상담/농기계임대");
+        listDataHeader.add("농지/주택");
+        listDataHeader.add("금융");
+
+        e_list1 = new ArrayList<String>();
+        e_list2 = new ArrayList<String>();
+        e_list3 = new ArrayList<String>();
+
+        listDataChild.put(listDataHeader.get(0), e_list1);
+        listDataChild.put(listDataHeader.get(1), e_list2);
+        listDataChild.put(listDataHeader.get(2), e_list3);
+
+    }
     private ExpandableListView getExpandableListView() {
         return expListView;
-    }
-
-    private ExpandableListView mListView;
-
-    private void setLayout() {
-        mListView = (ExpandableListView) v.findViewById(R.id.elv_list);
     }
 
     public void initcsvfile() {
