@@ -1,10 +1,9 @@
-﻿package ac.plusone.main;
+package ac.plusone.main;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -40,7 +39,6 @@ import java.util.ArrayList;
 
 import ac.plusone.R;
 import ac.plusone.guide.GuideActivity;
-import ac.plusone.main.MapActivity;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
