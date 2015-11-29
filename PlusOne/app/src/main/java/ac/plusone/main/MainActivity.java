@@ -152,6 +152,14 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
             }
         });
+        Button gangwondo = (Button)findViewById(R.id.gangwondo);
+        gangwondo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, MapActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
 
@@ -174,7 +182,7 @@ public class MainActivity extends AppCompatActivity
             acct = result.getSignInAccount();
             profileName.setText(acct.getDisplayName());
             profileEmail.setText(acct.getEmail());
-            
+
             updateUI(true);
 
             SharedPreferences userPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());

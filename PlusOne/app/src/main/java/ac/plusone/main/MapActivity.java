@@ -1,4 +1,4 @@
-﻿package ac.plusone.main;
+package ac.plusone.main;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -222,7 +222,7 @@ public class MapActivity extends AppCompatActivity implements LocationListener {
                     } catch (ExecutionException e) {
                         e.printStackTrace();
                     }
-                return true;
+                    return true;
                 }
                 return false;
             }
@@ -2143,3 +2143,4 @@ public class MapActivity extends AppCompatActivity implements LocationListener {
 
     }
 }
+
