@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/jiga_card_view"
+    android:layout_width="match_parent"
+    android:layout_height="70dp"
+    card_view:cardUseCompatPadding="false"
+    android:gravity="center_vertical"
+    card_view:contentPadding="0.3dp">
+
+    <RelativeLayout
+        android:id="@+id/jiga_father"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_gravity="center_vertical"
+        android:layout_margin="1dp">
+
+        <TextView
+            android:id="@+id/land_name"
+            android:layout_width="220dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="5sp"
+            android:text="인천광역시 계양구 임학동 5-56"
+            android:textColor="#616161"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/won1"
+            android:layout_width="13dp"
+            android:layout_height="13dp"
+            android:layout_below="@id/land_name"
+            android:src="@drawable/won" />
+
+        <TextView
+            android:id="@+id/land_sage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/land_name"
+            android:layout_toRightOf="@id/won1"
+            android:layout_marginLeft="5sp"
+            android:textSize="11sp"
+            android:text="평당 13,000 / "
+            android:textColor="#616161" />
+
+        <ImageView
+            android:id="@+id/won2"
+            android:layout_width="13dp"
+            android:layout_height="13dp"
+            android:layout_below="@id/land_name"
+            android:layout_toRightOf="@id/land_sage"
+            android:src="@drawable/won" />
+
+        <TextView
+            android:id="@+id/land_sage_avr"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/land_name"
+            android:layout_marginLeft="5sp"
+            android:textSize="11sp"
+            android:layout_toRightOf="@id/won2"
+            android:text="지역평균 20,000"
+
+            android:textColor="#616161" />
+
+        <ImageView
+            android:id="@+id/calculator"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/calculator" />
+    </RelativeLayout>
+</android.support.v7.widget.CardView>

@@ -1,22 +1,31 @@
-package ac.plusone.main;
+﻿package ac.plusone.main;
 
-import android.app.ActionBar;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Point;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import android.widget.ImageView;
 import android.widget.SlidingDrawer;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -34,24 +43,27 @@ import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.algo.GridBasedAlgorithm;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import ac.plusone.R;
 import ac.plusone.map.Address;
-import ac.plusone.map.AddressAsync;
-import ac.plusone.map.MyItem;
+import ac.plusone.map.InMapAddressAsync;
+import ac.plusone.map.JigaDialog;
 import ac.plusone.map.OwnIconRendered;
 import ac.plusone.map.RealEstate;
 import ac.plusone.map.RealEstateAsync;
+import ac.plusone.map.RealEstateSearchAsync;
 
-public class MapActivity extends FragmentActivity implements LocationListener {
+public class MapActivity extends AppCompatActivity implements LocationListener {
     SupportMapFragment mapView;
     GoogleMap googleMap;
     SlidingDrawer slidingDrawer;
     RecyclerView recyclerView;
+    ArrayAdapter<String> searchadapter;
+    String[] Names;
+    AutoCompleteTextView textView;
+    ArrayList<RealEstate> searchedRealestate;
 
     LocationManager locationManager;
     ClusterManager<RealEstate> mClusterManager;
@@ -73,13 +85,86 @@ public class MapActivity extends FragmentActivity implements LocationListener {
         setContentView(R.layout.map_activity);
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         mapView = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_view);
-        googleMap = mapView.getMap()    ;
+        googleMap = mapView.getMap();
 
-        ActionBar bar = getActionBar();
+        android.support.v7.app.ActionBar mActionBar = getSupportActionBar();
+        LayoutInflater mInflater = LayoutInflater.from(this);
+        View mCustomView = mInflater.inflate(R.layout.map_search, null);
+        mActionBar.setCustomView(mCustomView);
+        mActionBar.setDisplayShowCustomEnabled(true);
+        android.support.v7.widget.Toolbar parent = (android.support.v7.widget.Toolbar) mCustomView.getParent();
+        parent.setContentInsetsAbsolute(15, 15);
+        final Spinner spinner = (Spinner)mCustomView.findViewById(R.id.spinner);
+
+        Names = new String[]{"이것은 ", "테스트"};
+
+        String[] Menu = new String[]{"지역", "부동산"};
+        ArrayAdapter<String> menuadapter = new ArrayAdapter<String>(
+                getApplicationContext(),
+                android.R.layout.simple_spinner_item,
+                Menu
+        );
+        menuadapter.setDropDownViewResource(R.layout.map_simple_cust_list);
+        spinner.setAdapter(menuadapter);
+
+        searchadapter = new ArrayAdapter<String>(
+                getApplicationContext(),
+                R.layout.map_simple_cust_list,
+                Names
+        );
+
+        textView = (AutoCompleteTextView)mCustomView.findViewById(R.id.autoComplete);
+        textView.setAdapter(searchadapter);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayShowHomeEnabled(false);
+            getSupportActionBar().setHomeButtonEnabled(false);
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+        }
+
 
 //       MyPoint myPoint = findGeoPoint("서울시 은평구  불광동");
 //       Log.e("위도 받아오기!!!!!!!!!", myPoint.getLat() + " ");
 //       Log.e("경도 받아오기!!!!!!!!!", myPoint.getLon() + " ");
+
+        ImageView enter = (ImageView)mCustomView.findViewById(R.id.enter);
+        searchedRealestate = new ArrayList<>();
+
+        enter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if((spinner.getSelectedItem().toString().equals("부동산"))){
+                    RealEstateSearchAsync realEstateSearchAsync = new RealEstateSearchAsync(MapActivity.this);
+                    try {
+                        String addr = textView.getText().toString();
+                        searchedRealestate = realEstateSearchAsync.execute(addr,"30").get();
+                        String[] realestateNames = new String[searchedRealestate.size()];
+                        for(int i=0; i<searchedRealestate.size() ; i++){
+                            realestateNames[i] = searchedRealestate.get(i).getName();
+                        }
+                        searchadapter = new ArrayAdapter<String>(
+                                getApplicationContext(),
+                                R.layout.map_simple_cust_list,
+                                realestateNames
+                        );
+                        searchadapter.notifyDataSetChanged();
+                        textView.setAdapter(searchadapter);
+                        if(searchedRealestate.size() == 0){
+                            Toast.makeText(getApplicationContext(),"일치하는 부동산이 없습니다.", Toast.LENGTH_LONG).show();
+                        }
+                        textView.showDropDown();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    }
+                }else if((spinner.getSelectedItem().toString().equals("지역"))){
+
+                }
+
+//                Log.e("부동산 검색 결과물 : ",searchedRealestate.get(0).getAddress() );
+            }
+        });
+
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         slidingDrawer = (SlidingDrawer) findViewById(R.id.bottom);
@@ -90,6 +175,58 @@ public class MapActivity extends FragmentActivity implements LocationListener {
         setPolygon2();
         setPolygon3();
         setPolygon4();
+
+        textView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+                double clicked_lat = searchedRealestate.get(position).getLatitude();
+                double clicked_lon = searchedRealestate.get(position).getLongitude();
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(clicked_lat, clicked_lon), 17));
+                slidingDrawer.close();
+                recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                ac.plusone.map.RecyclerAdapter adapter = new ac.plusone.map.RecyclerAdapter(searchedRealestate.get(position), getApplicationContext());
+                recyclerView.setAdapter(adapter);
+                slidingDrawer.open();
+                InputMethodManager imm = (InputMethodManager) getSystemService(MapActivity.this.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(slidingDrawer.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+            }
+        });
+        textView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if(actionId == EditorInfo.IME_ACTION_DONE){
+                    RealEstateSearchAsync realEstateSearchAsync = new RealEstateSearchAsync(MapActivity.this);
+                    try {
+                        String addr = textView.getText().toString();
+                        searchedRealestate = realEstateSearchAsync.execute(addr,"30").get();
+                        String[] realestateNames = new String[searchedRealestate.size()];
+                        for(int i=0; i<searchedRealestate.size() ; i++){
+                            realestateNames[i] = searchedRealestate.get(i).getName();
+                        }
+                        searchadapter = new ArrayAdapter<String>(
+                                getApplicationContext(),
+                                R.layout.map_simple_cust_list,
+                                realestateNames
+                        );
+                        searchadapter.notifyDataSetChanged();
+                        textView.setAdapter(searchadapter);
+                        if(searchedRealestate.size() == 0){
+                            Toast.makeText(getApplicationContext(),"일치하는 부동산이 없습니다.", Toast.LENGTH_LONG).show();
+                        }
+                        textView.showDropDown();
+                        InputMethodManager imm = (InputMethodManager) getSystemService(MapActivity.this.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(textView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    }
+                return true;
+                }
+                return false;
+            }
+        });
     }
 
     @Override
@@ -120,9 +257,6 @@ public class MapActivity extends FragmentActivity implements LocationListener {
                 LatLngBounds cur_location = getBoundsWithoutSpacing();
                 LatLng northeast = cur_location.northeast;
                 LatLng southwest = cur_location.southwest;
-                Log.e("북동쪽의 위치 받아오기", "위도 : " + northeast.latitude + ", 경도 : " + northeast.longitude);
-                Log.e("남서쪽의 위치 받아오기", "위도 : " + southwest.latitude + ", 경도 : " + southwest.longitude);
-                Log.e("줌레벨 확인 : ", googleMap.getCameraPosition().zoom + "");
 
                 if (googleMap.getCameraPosition().zoom > 9) {
                     ChulwonPoly.setVisible(false);
@@ -161,7 +295,7 @@ public class MapActivity extends FragmentActivity implements LocationListener {
                     setUpClusterer();
                     setMarkers(myItems);
                 }*/
-                if (googleMap.getCameraPosition().zoom > 9) {
+                if (googleMap.getCameraPosition().zoom > 11) {
 
                     RealEstateAsync realEstateAsync = new RealEstateAsync();
                     ArrayList<RealEstate> myItems = new ArrayList<RealEstate>();
@@ -200,6 +334,42 @@ public class MapActivity extends FragmentActivity implements LocationListener {
                 }
             }
         });
+
+        googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+            @Override
+            public void onMapLongClick(LatLng latLng) {
+
+                double min_lat = latLng.latitude - 0.001;
+                double max_lat = latLng.latitude + 0.001;
+                double min_lon = latLng.longitude - 0.00005;
+                double max_lon = latLng.longitude + 0.00005;
+                ArrayList<Address> getaddresses = new ArrayList<Address>();
+                InMapAddressAsync inMapAddressAsync = new InMapAddressAsync();
+                try {
+                    String addr = textView.getText().toString();
+                    getaddresses = inMapAddressAsync.execute(min_lat, max_lat, min_lon, max_lon).get();
+                    Log.e("롱클릭 받았을때의....", getaddresses.get(0).getLocation());
+                    JigaDialog dialog = new JigaDialog(MapActivity.this, getaddresses);
+                    dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.WHITE));
+                    dialog.show();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }});
+      /*          JigaDialog dialog = new JigaDialog(getApplicationContext(), );
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+                dialog.setOnDismissListener(new OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        SystemClock.sleep(200);
+                        reloadFragment();
+                    }
+                });
+                dialog.show();*/
+
+
+
     }
 
     private void setMarkers(ArrayList<RealEstate> myItems) {

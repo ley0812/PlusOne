@@ -18,9 +18,6 @@ import java.util.Collection;
 
 import ac.plusone.R;
 
-/**
- * Created by Admin on 2015-11-20.
- */
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Cluster<RealEstate> itemlist;
     private ArrayList<RealEstate> itemarray;
@@ -102,6 +99,5 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public int getItemCount() {
         return itemarray.size();
     }
-
 
 }

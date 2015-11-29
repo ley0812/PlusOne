@@ -3,13 +3,13 @@
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:id="@+id/card_view"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="110dp"
     card_view:cardUseCompatPadding="false"
     card_view:contentPadding="0.3dp">
     <RelativeLayout
         android:id="@+id/father"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="110dp"
         android:background="#FFA000"
         android:layout_margin="1dp">
         <TextView
@@ -17,10 +17,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingBottom="5sp"
-            android:textSize="20sp"
+            android:textSize="22sp"
             android:layout_margin="5sp"
             android:textStyle="bold"
-            android:textColor="#FFFFFF"/>
+            android:textColor="#FFF0FF"/>
         <TextView
             android:id="@+id/list_address"
             android:layout_width="wrap_content"
@@ -45,10 +45,11 @@
 
         <ImageView
             android:id = "@+id/phone"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_centerVertical="true"
+            android:layout_width="37dp"
+            android:layout_height="37dp"
             android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="29dp"
             android:src = "@drawable/phonewhite"/>
     </RelativeLayout>
 </android.support.v7.widget.CardView>

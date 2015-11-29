@@ -20,7 +20,7 @@ public class RealEstateAsync extends AsyncTask<Double, String, ArrayList<RealEst
     protected ArrayList<RealEstate> doInBackground(Double... params) {
         try {
                 JSONParser jsonParser = new JSONParser();
-            String url = "http://113.198.84.106:80/GangWon/gangwon.do?identification=realestate&min_latitude=" + params[0] + "&max_latitude=" + params[1]
+            String url = "http://52.69.147.247:8080/GangWon/gangwon.do?identification=realestate&min_latitude=" + params[0] + "&max_latitude=" + params[1]
                     + "&min_longitude=" + params[2] + "&max_longitude=" + params[3];
             JSONObject jsonObject = jsonParser.getJSONFromUrl(url);
             JSONArray jsonArray = jsonObject.getJSONArray("realestate");
