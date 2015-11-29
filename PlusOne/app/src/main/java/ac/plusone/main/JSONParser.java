@@ -23,7 +23,7 @@ import java.util.ArrayList;
 public class JSONParser {
 
     //final String url = "http://223.194.141.152:8080/PlusOne/";
-    final String url = "http://172.30.104.250:8080/PlusOne/";
+    final String url = "http://52.69.147.247:8080/PlusOne/";
     //final String url = "http://192.168.1.8:8080/PlusOne/";
 
     String servlet;

@@ -305,14 +305,14 @@ public class MainActivity extends AppCompatActivity
 
         board1.setText(mainBoardList.get(0).getTitle());
         board11.setText(mainBoardList.get(0).getCategory());
-        board2.setText(mainBoardList.get(1).getTitle());
-        board22.setText(mainBoardList.get(1).getCategory());
-        board3.setText(mainBoardList.get(2).getTitle());
-        board33.setText(mainBoardList.get(2).getCategory());
-        board4.setText(mainBoardList.get(3).getTitle());
-        board44.setText(mainBoardList.get(3).getCategory());
-        board5.setText(mainBoardList.get(4).getTitle());
-        board55.setText(mainBoardList.get(4).getCategory());
+//        board2.setText(mainBoardList.get(1).getTitle());
+//        board22.setText(mainBoardList.get(1).getCategory());
+//        board3.setText(mainBoardList.get(2).getTitle());
+//        board33.setText(mainBoardList.get(2).getCategory());
+//        board4.setText(mainBoardList.get(3).getTitle());
+//        board44.setText(mainBoardList.get(3).getCategory());
+//        board5.setText(mainBoardList.get(4).getTitle());
+//        board55.setText(mainBoardList.get(4).getCategory());
 
         layout1.setOnClickListener(new View.OnClickListener() {
             @Override
