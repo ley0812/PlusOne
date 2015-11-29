@@ -22,6 +22,7 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+
                 <ImageView
                     android:id="@+id/btn_guide"
                     android:layout_width="match_parent"
@@ -52,7 +53,7 @@
                     android:layout_weight="3"
                     android:layout_margin="5dp"
                     android:background="@drawable/button_layout"
-                    android:text="전체 보기"/>
+                    android:text="강원도 전체보기"/>
 
                 <Button
                     android:layout_width="wrap_content"
@@ -63,55 +64,12 @@
                     android:text="강원도"/>
             </LinearLayout>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="16dp"
-                android:drawableLeft="@drawable/ic_map"
-                android:text="   지역 별로 찾기"
-                android:textStyle="bold"
-                android:textColor="#424242"
-                android:textSize="15dp"/>
-
-            <LinearLayout
+            <include
+                layout="@layout/br_main_horizon_button"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="8dp">
+                android:layout_height="match_parent" />
 
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_margin="5dp"
-                    android:background="@drawable/button_layout"
-                    android:text="홍성군"/>
-
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_margin="5dp"
-                    android:background="@drawable/button_layout"
-                    android:text="속초"/>
-
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_margin="5dp"
-                    android:background="@drawable/button_layout"
-                    android:text="춘천"/>
-
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_margin="5dp"
-                    android:background="@drawable/button_layout"
-                    android:text="홍성군"/>
-
-            </LinearLayout>
-
+            <!-- 게시판 최신 글 -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -123,189 +81,190 @@
                 android:textColor="#424242"
                 android:textSize="15dp"/>
 
-            <TextView
-                android:id="@+id/board"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="16dp"
-                android:text="더보기"
-                android:layout_gravity="right"/>
+                <TextView
+                    android:id="@+id/board"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="16dp"
+                    android:text="더보기"
+                    android:textSize="15sp"
+                    android:layout_gravity="right"/>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="8dp"
-                android:orientation="vertical">
-
-                <RelativeLayout
-                    android:id="@+id/main_relative_layout1"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="12dp"
-                    android:background="@drawable/button_layout_list">
+                    android:padding="8dp"
+                    android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/board_main1"
-                        android:layout_width="wrap_content"
+                    <RelativeLayout
+                        android:id="@+id/main_relative_layout1"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="8dp"
-                        android:maxEms="15"
-                        android:singleLine="true"
-                        android:textColor="#424242"
-                        android:textSize="15dp"
-                        android:text="title"/>
+                        android:padding="12dp"
+                        android:background="@drawable/button_layout_list">
 
-                    <TextView
-                        android:id="@+id/board_main11"
-                        android:layout_width="wrap_content"
+                        <TextView
+                            android:id="@+id/board_main1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="8dp"
+                            android:maxEms="15"
+                            android:singleLine="true"
+                            android:textColor="#424242"
+                            android:textSize="15dp"
+                            android:text="title"/>
+
+                        <TextView
+                            android:id="@+id/board_main11"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="#757575"
+                            android:textSize="15dp"
+                            android:layout_alignParentRight="true"
+                            android:text="category"/>
+                    </RelativeLayout>
+
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#eeeeee"/>
+
+                    <RelativeLayout
+                        android:id="@+id/main_relative_layout2"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textColor="#757575"
-                        android:textSize="15dp"
-                        android:layout_alignParentRight="true"
-                        android:text="category"/>
-                </RelativeLayout>
+                        android:padding="12dp"
+                        android:background="@drawable/button_layout_list">
 
+                        <TextView
+                            android:id="@+id/board_main2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="8dp"
+                            android:maxEms="15"
+                            android:singleLine="true"
+                            android:textColor="#424242"
+                            android:textSize="15dp"
+                            android:text="title"/>
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#eeeeee"/>
+                        <TextView
+                            android:id="@+id/board_main22"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="#757575"
+                            android:textSize="15dp"
+                            android:layout_alignParentRight="true"
+                            android:text="category"/>
+                    </RelativeLayout>
 
-                <RelativeLayout
-                    android:id="@+id/main_relative_layout2"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="12dp"
-                    android:background="@drawable/button_layout_list">
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#eeeeee"/>
 
-                    <TextView
-                        android:id="@+id/board_main2"
-                        android:layout_width="wrap_content"
+                    <RelativeLayout
+                        android:id="@+id/main_relative_layout3"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="8dp"
-                        android:maxEms="15"
-                        android:singleLine="true"
-                        android:textColor="#424242"
-                        android:textSize="15dp"
-                        android:text="title"/>
+                        android:padding="12dp"
+                        android:background="@drawable/button_layout_list">
 
-                    <TextView
-                        android:id="@+id/board_main22"
-                        android:layout_width="wrap_content"
+                        <TextView
+                            android:id="@+id/board_main3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="8dp"
+                            android:maxEms="15"
+                            android:singleLine="true"
+                            android:textColor="#424242"
+                            android:textSize="15dp"
+                            android:text="title"/>
+
+                        <TextView
+                            android:id="@+id/board_main33"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="#757575"
+                            android:textSize="15dp"
+                            android:layout_alignParentRight="true"
+                            android:text="category"/>
+                    </RelativeLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#eeeeee"/>
+
+                    <RelativeLayout
+                        android:id="@+id/main_relative_layout4"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textColor="#757575"
-                        android:textSize="15dp"
-                        android:layout_alignParentRight="true"
-                        android:text="category"/>
-                </RelativeLayout>
+                        android:padding="12dp"
+                        android:background="@drawable/button_layout_list">
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#eeeeee"/>
+                        <TextView
+                            android:id="@+id/board_main4"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="8dp"
+                            android:maxEms="15"
+                            android:singleLine="true"
+                            android:textColor="#424242"
+                            android:textSize="15dp"
+                            android:text="title"/>
 
-                <RelativeLayout
-                    android:id="@+id/main_relative_layout3"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="12dp"
-                    android:background="@drawable/button_layout_list">
+                        <TextView
+                            android:id="@+id/board_main44"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="#757575"
+                            android:textSize="15dp"
+                            android:layout_alignParentRight="true"
+                            android:text="category"/>
+                    </RelativeLayout>
 
-                    <TextView
-                        android:id="@+id/board_main3"
-                        android:layout_width="wrap_content"
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#eeeee3"/>
+
+                    <RelativeLayout
+                        android:id="@+id/main_relative_layout5"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="8dp"
-                        android:maxEms="15"
-                        android:singleLine="true"
-                        android:textColor="#424242"
-                        android:textSize="15dp"
-                        android:text="title"/>
+                        android:padding="12dp"
+                        android:background="@drawable/button_layout_list">
 
-                    <TextView
-                        android:id="@+id/board_main33"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="#757575"
-                        android:textSize="15dp"
-                        android:layout_alignParentRight="true"
-                        android:text="category"/>
-                </RelativeLayout>
+                        <TextView
+                            android:id="@+id/board_main5"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="8dp"
+                            android:maxEms="15"
+                            android:singleLine="true"
+                            android:textColor="#424242"
+                            android:textSize="15dp"
+                            android:text="title"/>
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#eeeeee"/>
-
-                <RelativeLayout
-                    android:id="@+id/main_relative_layout4"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="12dp"
-                    android:background="@drawable/button_layout_list">
-
-                    <TextView
-                        android:id="@+id/board_main4"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="8dp"
-                        android:maxEms="15"
-                        android:singleLine="true"
-                        android:textColor="#424242"
-                        android:textSize="15dp"
-                        android:text="title"/>
-
-                    <TextView
-                        android:id="@+id/board_main44"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="#757575"
-                        android:textSize="15dp"
-                        android:layout_alignParentRight="true"
-                        android:text="category"/>
-                </RelativeLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#eeeee3"/>
-
-                <RelativeLayout
-                    android:id="@+id/main_relative_layout5"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="12dp"
-                    android:background="@drawable/button_layout_list">
-
-                    <TextView
-                        android:id="@+id/board_main5"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="8dp"
-                        android:maxEms="15"
-                        android:singleLine="true"
-                        android:textColor="#424242"
-                        android:textSize="15dp"
-                        android:text="title"/>
-
-                    <TextView
-                        android:id="@+id/board_main55"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="#757575"
-                        android:textSize="15dp"
-                        android:layout_alignParentRight="true"
-                        android:text="category"/>
-                </RelativeLayout>
+                        <TextView
+                            android:id="@+id/board_main55"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="#757575"
+                            android:textSize="15dp"
+                            android:layout_alignParentRight="true"
+                            android:text="category"/>
+                    </RelativeLayout>
 
             </LinearLayout>
 
-            <Button
-                android:id="@+id/mapbtn"
-                android:layout_below="@id/board"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="지도 보기"/>
+            <!--<Button-->
+                <!--android:id="@+id/mapbtn"-->
+                <!--android:layout_below="@id/board"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="지도 보기"/>-->
 
         </LinearLayout>
 

@@ -1,10 +1,12 @@
 package ac.plusone.main;
 
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,6 +35,8 @@ public class SplashActivity extends AppCompatActivity {
             }
         }, SPLASH_TIME);
 
+        TextView logo = (TextView) findViewById(R.id.splash_logo);
+        logo.setTypeface(Typeface.createFromAsset(getAssets(), "NanumBrush.ttf"));
     }
 
     private class JsonLoadingTask extends AsyncTask {

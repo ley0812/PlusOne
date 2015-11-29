@@ -3,14 +3,14 @@
 
     <group android:checkableBehavior="single">
 
-        <item android:id="@+id/plusone_sign_out"
-            android:icon="@drawable/ic_logout"
-            android:title="로그아웃"
-            android:visible="false"/>
-
         <item android:id="@+id/plusone_write"
             android:icon="@drawable/ic_nav_new"
             android:title="새 글 쓰기"
+            android:visible="false"/>
+
+        <item android:id="@+id/plusone_sign_out"
+            android:icon="@drawable/ic_logout"
+            android:title="로그아웃"
             android:visible="false"/>
 
         <item android:id="@+id/plusone_revoke"

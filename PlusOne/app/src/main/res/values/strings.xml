@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">강원파밍</string>
+    <string name="app_name">귀농 iN 강원</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -18,7 +18,8 @@
     </string-array>
     <string name="title_activity_sign_in">SignInActivity</string>
     <string name="please_login">로그인 해 주세요.</string>
-    <string name="server_client_id">58302242229-e1ocujpm0fcsr51c4un3g603kk2i2ep8.apps.googleusercontent.com</string>
+    <!--<string name="server_client_id">58302242229-e1ocujpm0fcsr51c4un3g603kk2i2ep8.apps.googleusercontent.com</string>-->
+    <string name="server_client_id">58302242229-jok749reb5k9oraapak0ovovh1vdsmjg.apps.googleusercontent.com</string>
 
     <string name="st_guide1"> [귀농준비 절차]\n\n
         1단계(귀농결심) : 사전에 농업관련 기관이나 단체, 농촌지도자, 선배 귀농인을 방문하여 필요한 정보를 수집해야 합니다.\n\n
