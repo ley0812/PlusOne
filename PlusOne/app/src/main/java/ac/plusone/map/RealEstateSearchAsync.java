@@ -33,7 +33,7 @@ public class RealEstateSearchAsync extends AsyncTask<String, String, ArrayList<R
     protected ArrayList<RealEstate> doInBackground(String... params) {
         try {
             JSONParser jsonParser = new JSONParser();
-            String url = "http://113.198.82.72/GangWon/gangwon.do?identification=realestatesearch&keyword="+params[0]+"&limit="+params[1];
+            String url = "http://52.69.147.247:8080/GangWon/gangwon.do?identification=realestatesearch&keyword="+params[0]+"&limit="+params[1];
             url = url.replaceAll(" ", "%20");
             JSONObject jsonObject = jsonParser.getJSONFromUrl(url);
             JSONArray jsonArray = jsonObject.getJSONArray("realestate");

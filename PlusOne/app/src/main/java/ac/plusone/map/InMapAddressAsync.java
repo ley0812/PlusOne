@@ -22,7 +22,7 @@ public class InMapAddressAsync extends AsyncTask<Double, String, ArrayList<Addre
     protected ArrayList<Address> doInBackground(Double... params) {
         try {
             JSONParser jsonParser = new JSONParser();
-            String url = "http://113.198.82.72:80/GangWon/gangwon.do?identification=map&min_latitude=" + params[0] + "&max_latitude=" + params[1]
+            String url = "http://52.69.147.247:8080/GangWon/gangwon.do?identification=map&min_latitude=" + params[0] + "&max_latitude=" + params[1]
                     + "&min_longitude=" + params[2] + "&max_longitude=" + params[3];
             JSONObject jsonObject = jsonParser.getJSONFromUrl(url);
             JSONArray jsonArray = jsonObject.getJSONArray("jiga");

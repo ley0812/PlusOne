@@ -9,7 +9,13 @@
         class="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-
+    <TextView
+        android:id = "@+id/cast"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#88FFFFFF"
+        android:text ="해당하는 지역을 누르시면 확대됩니다.\n(지역 서비스는 &quot;홍천군 남면&quot;만 가능합니다.)"
+     />
     <SlidingDrawer
         android:id="@+id/bottom"
         android:layout_width="match_parent"

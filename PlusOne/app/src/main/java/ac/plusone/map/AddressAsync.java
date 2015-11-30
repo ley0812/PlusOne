@@ -1,6 +1,7 @@
 package ac.plusone.map;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -19,12 +20,15 @@ public class AddressAsync extends AsyncTask<String, String, ArrayList<Address>> 
     protected ArrayList<Address> doInBackground(String... params) {
         try {
             JSONParser jsonParser = new JSONParser();
-            String url = "http://223.194.135.12:80/GangWon/gangwon.do?identification=price&location=" + params[0] + "&limit=" + params[1];
+            String url = "http://52.69.147.247:8080/GangWon/gangwon.do?identification=price&location=" + params[0] + "&limit=" + params[1];
+            url = url.replaceAll(" ", "%20");
             JSONObject jsonObject = jsonParser.getJSONFromUrl(url);
             JSONArray jsonArray = jsonObject.getJSONArray("jiga");
             for(int i=0 ; i<jsonArray.length() ; i++){
                 JSONObject jObject = jsonArray.getJSONObject(i);
-                address.add(new Address(jObject.getString("address"),jObject.getInt("price"), jObject.getString("date"), jObject.getDouble("latitude"), jObject.getDouble("longitude")));
+                Log.e("지가테이블에서 제이슨 받아오는거 : ", new String(jObject.getString("address").getBytes("8859_1"), "utf-8"));
+                address.add(new Address(new String(jObject.getString("address").getBytes("8859_1"), "utf-8"),
+                        jObject.getInt("price"),new String(jObject.getString("date").getBytes("8859_1"), "utf-8"), jObject.getDouble("latitude"), jObject.getDouble("longitude")));
             }
         } catch (Exception e) {
             e.printStackTrace();
